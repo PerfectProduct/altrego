@@ -11,7 +11,7 @@
 # сценария = красный; secondary-ссылки на свежесть пункта не влияют).
 
 version: 0
-computed_at: "2026-08-31T00:00:00Z"
+computed_at: "2026-09-08T05:51:27Z"
 computed_from: "01-theygrow/operations/theygrow-delivery-contract.md §11 и §7"
 # §7 «Формат каждого ответа оркестратора» вошёл 2026-08-31 вместе с
 # R-OWNERBLOCK-006: пункт «Действия владельца — отдельным блоком, а не прозой»
@@ -65,7 +65,7 @@ rules:
       section: "§11"
       heading: "Конец хода — точка, где нужно слово владельца (добавлено 2026-08-25, разбор сессии security-каденции)."
       lines_at_binding: "188-189"
-    content_hash: "445ed61c9b73d5da3360401948caa248675c29c4f73b5c83db095db0e3170397"
+    content_hash: "dc9de4ddee6046d5a2fd1bb9bd2ad3a8b03536d0d3839772136d30c8b4591cf5"
     classes: [К4]
 
   - rule_id: R-VACUUM-007
