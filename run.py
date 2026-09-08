@@ -303,6 +303,10 @@ def run_file(checkers, path: str, disqualified: dict[str, str] | None = None,
     помечается «не измерено», прочие меряют. Отказ гейта гасит названные им
     чекеры — гейт, не доказавший пригодность входа, не является разрешением.
 
+    Само измерение живёт в `run_text` ниже: файл читается здесь, а считается
+    там — тем же проходом, каким мост MCP меряет черновик хода, ещё не
+    ставший файлом.
+
     Возвращает (находки, число применённых изъятий, {чекер: причина},
     [CheckerFailure]).
     """
@@ -315,6 +319,23 @@ def run_file(checkers, path: str, disqualified: dict[str, str] | None = None,
             exc_type=type(exc).__name__, message=str(exc)[:EVIDENCE_CHARS],
             frame=None, elapsed=None, limit=None)]
 
+    return run_text(checkers, text, path, disqualified, limit)
+
+
+def run_text(checkers, text: str, path: str,
+             disqualified: dict[str, str] | None = None, limit: float = 1.0):
+    """То же измерение по тексту артефакта, уже прочитанному в память.
+
+    Вынесено из `run_file` 2026-09-08 пакетом моста MCP: сервер линтера меряет
+    ЧЕРНОВИК хода, которого на диске нет, и обязан мерить его тем же проходом,
+    что и файл, — иначе в репозитории оказалось бы два линтера, и «зелёный до
+    выдачи» перестал бы значить «зелёный в прогоне». `path` здесь только метка
+    находки (в отчёте и в `CheckerFailure.file`); файловых эффектов у функции
+    нет, диск не читается.
+
+    Возвращает то же, что `run_file`: (находки, число применённых изъятий,
+    {чекер: причина}, [CheckerFailure]).
+    """
     disqualified = dict(disqualified or {})
     gates, rest = split_gates(checkers)
     raw: list[Finding] = []
