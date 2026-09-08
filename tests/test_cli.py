@@ -97,3 +97,31 @@ def test_fast_touches_no_vault(monkeypatch):
     monkeypatch.setattr(run, "_git", boom)
     monkeypatch.setattr(canon, "hash_rule", boom)
     assert run.main(["--fast", *GREEN, "--no-report"]) == 0
+
+
+# ─────────────────── run_text ↔ run_file: один и тот же проход ───────────────
+
+RED_ALL = sorted(glob.glob(os.path.join(ROOT, "linter", "fixtures", "red", "*.md")))
+
+
+@pytest.mark.parametrize("path", GREEN + RED_ALL,
+                         ids=[os.path.relpath(p, ROOT) for p in GREEN + RED_ALL])
+def test_run_text_equals_run_file(path):
+    """Черновик меряется тем же проходом, что и файл, — по всем 32 фикстурам.
+
+    Мост MCP (linter/mcp_server.py) зовёт `run_text`, прогон владельца —
+    `run_file`. Разойдись они, «зелёный до выдачи» и «зелёный в прогоне» стали
+    бы разными утверждениями, и в репозитории оказалось бы два линтера. Поэтому
+    равенство меряется рантаймом на каждой фикстуре, включая деградировавшие:
+    у red/artifact_integrity.md срабатывает гейт, и совпасть обязаны и
+    погашенные чекеры, а не только находки.
+    """
+    manifest = run.load_yaml(run.rel("linter/manifest.yaml"))
+    checkers, _skipped, failed = run.load_checkers(manifest, "handoff")
+    assert failed == []
+    with open(path, encoding="utf-8") as fh:
+        text = fh.read()
+
+    by_file = run.run_file(checkers, path, None, 2.0)
+    by_text = run.run_text(checkers, text, path, None, 2.0)
+    assert by_file == by_text
