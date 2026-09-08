@@ -75,8 +75,12 @@ HANDSHAKE = [
 ]
 
 
-def drive(messages, python=None, cwd=None, env=None, timeout=90):
+def drive(messages, python=None, cwd=None, env=None, timeout=90, args=()):
     """Поднять сервер, отдать сообщения, собрать ответы по id.
+
+    `args` — аргументы запуска сервера, ровно как в `args` записи клиента: пути
+    вольта приходят ими (CLAUDE.md, «Мост MCP»), и меряться они обязаны на
+    настоящей командной строке, а не подменой модульной переменной.
 
     stdin держится открытым, пока не пришли все ответы: EOF на stdin гасит
     незавершённые запросы, и ответ на tools/call просто не приходит (mcp 2.x:
@@ -88,7 +92,7 @@ def drive(messages, python=None, cwd=None, env=None, timeout=90):
     отличимый провал (§11, «Исполнимость shell-блока», (3)).
     """
     proc = subprocess.Popen(
-        [python or sys.executable, "-u", SERVER],
+        [python or sys.executable, "-u", SERVER, *args],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         text=True, encoding="utf-8", cwd=cwd, env=env)
     watchdog = threading.Timer(timeout, proc.kill)
@@ -136,8 +140,11 @@ def client_env() -> dict:
     """Окружение, измеренное у клиента 2026-09-08.
 
     Claude Desktop поднимает сервер через `wsl.exe -e …`: профиль не читается,
-    переменные вольта приходят только из блока `env` записи сервера. Здесь их
-    нет намеренно — так меряется поведение при незаданном вольте.
+    а блок `env` записи достаётся процессу Windows и внутрь дистрибутива не
+    переносится (замер владельца 2026-09-08, PowerShell: `wsl.exe -e printenv
+    ALTREGO_VAULT_MASTER` — пусто, код 1; путь и код 0 только под
+    `WSLENV=ALTREGO_VAULT_MASTER/u`). Переменных вольта здесь нет намеренно:
+    так выглядит процесс сервера у клиента, и путь ему приходит аргументом.
     """
     return {"HOME": os.path.expanduser("~"),
             "USER": os.environ.get("USER", "dev"),
@@ -176,9 +183,10 @@ def test_stdio_red_draft_is_red_through_the_transport():
 def test_stdio_from_foreign_cwd_without_env(tmp_path):
     """Измеренная среда клиента: чужой cwd, профиль не прочитан, вольта нет.
 
-    Зелёный черновик проходит (пути сервера абсолютные), а `queue` отказывает
-    названным отказом с именем переменной — не молчаливым умолчанием на каталог
-    владельца.
+    Здесь меряется независимость от cwd: зелёный черновик проходит, потому что
+    все пути сервера абсолютные, а `queue` при неадресованном вольте отказывает,
+    а не молчит. Текст самого отказа — предмет
+    `test_neither_channel_is_the_typed_refusal_naming_both` ниже.
     """
     green = open(GREEN_TURN_END, encoding="utf-8").read()
     env = client_env()
@@ -189,8 +197,7 @@ def test_stdio_from_foreign_cwd_without_env(tmp_path):
     assert sorted(answers) == [1, 2, 3], stderr
     assert structured(answers[2])["passed"] is True
     assert answers[3]["result"]["isError"] is True
-    text = answers[3]["result"]["content"][0]["text"]
-    assert run.ENV_MASTER in text and "env" in text
+    assert "vault_env_unset" in answers[3]["result"]["content"][0]["text"]
     assert code == 0
 
 
@@ -306,6 +313,187 @@ def test_guard_restarts_at_most_once(tmp_path):
     assert done.stdout == ""
 
 
+# ─────────────────── пути вольта: аргумент и окружение ───────────────────────
+#
+# Замер владельца 2026-09-08 (PowerShell, оба направления, коды выхода
+# записаны): блок `env` записи сервера достаётся ПРОЦЕССУ WINDOWS `wsl.exe` и
+# внутрь дистрибутива не переносится — `wsl.exe -e printenv
+# ALTREGO_VAULT_MASTER` печатал пусто кодом 1 и печатал путь кодом 0 только
+# после `WSLENV=ALTREGO_VAULT_MASTER/u`. Отсюда канал путей — аргумент запуска,
+# окружение остаётся вторым. Меряются оба канала и их ПОРЯДОК, и меряются
+# настоящей командной строкой процесса: подмена модульной переменной измерила бы
+# разрешение, но не разбор argv, то есть не ту дверь, в которую входит клиент.
+#
+# Единица диспозиции — «на процесс сервера».
+
+def fake_master(tmp_path, name: str, marker: str) -> str:
+    """Каталог, изображающий рабочую копию вольта: файл очереди по конфигу репо.
+
+    Путь файла и признаки разбора берутся из настоящего `config.yaml` — тест
+    меряет ту же дверь, что клиент, а не свою копию её формы. Вольт владельца
+    здесь не читается ни в каком виде (CLAUDE.md, «в вольт не писать»).
+
+    `marker` печатается в текст пункта: два каталога обязаны быть различимы в
+    выдаче, иначе «сработал аргумент» неотличимо от «сработало окружение».
+    """
+    config = run.load_config()
+    root = os.path.join(str(tmp_path), name)
+    path = os.path.join(root, config["queue"]["file"])
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write("**Единая очередь контура на 2026-09-08.** Порядок:\n\n"
+                 f"1. **{marker}** — голова.\n")
+    return root
+
+
+def test_vault_argument_wins_over_a_different_env_value(tmp_path):
+    """Порядок каналов измерен, а не предположен: аргумент бьёт переменную.
+
+    Каналы адресуют РАЗНЫЕ каталоги, и по тексту головы видно, какой сработал.
+    Совпадающие пути порядка не измерили бы вовсе.
+    """
+    chosen = fake_master(tmp_path, "по-аргументу", "ГОЛОВА ПО АРГУМЕНТУ")
+    other = fake_master(tmp_path, "по-окружению", "ГОЛОВА ПО ОКРУЖЕНИЮ")
+    answers, code, stderr = drive(
+        HANDSHAKE + [call(2, "queue")], cwd="/",
+        env={**client_env(), run.ENV_MASTER: other},
+        args=["--vault-master", chosen])
+    assert 2 in answers, stderr
+    assert answers[2]["result"].get("isError") in (False, None)
+    got = structured(answers[2])
+    assert got["head"]["text"].startswith("**ГОЛОВА ПО АРГУМЕНТУ**")
+    assert got["source"].startswith(chosen) and not got["source"].startswith(other)
+    assert code == 0
+
+
+def test_vault_argument_alone_without_any_env(tmp_path):
+    """Аргумент один, переменных вольта нет вовсе — очередь читается.
+
+    Это и есть измеренная связка клиента: через `wsl.exe` до процесса доходит
+    командная строка, а блок `env` — нет. `--vault-clone` подаётся здесь же:
+    его не читает пока ни один инструмент, но запись клиента несёт оба флага, и
+    «принимается» обязано быть измерено, а не подразумеваться.
+    """
+    master = fake_master(tmp_path, "только-аргумент", "ГОЛОВА БЕЗ ОКРУЖЕНИЯ")
+    env = client_env()
+    assert run.ENV_MASTER not in env and run.ENV_CLONE not in env
+    answers, code, stderr = drive(
+        HANDSHAKE + [call(2, "queue")], cwd="/", env=env,
+        args=["--vault-master", master,
+              "--vault-clone", os.path.join(str(tmp_path), "клон")])
+    assert 2 in answers, stderr
+    assert answers[2]["result"].get("isError") in (False, None)
+    assert structured(answers[2])["head"]["text"].startswith("**ГОЛОВА БЕЗ ОКРУЖЕНИЯ**")
+    assert code == 0
+
+
+def test_env_alone_still_works_without_the_argument(tmp_path):
+    """Второй канал жив: там, где переменная доходит, её одной достаточно.
+
+    Речь не о прежней записи клиента — она пути и не доносила, потому и
+    меняется. Речь о запуске из WSL руками, харнессе и CI: там переменная до
+    процесса доходит, и аргумент, отменивший бы её, сломал бы эти три связки.
+    """
+    master = fake_master(tmp_path, "только-окружение", "ГОЛОВА ПО ОКРУЖЕНИЮ")
+    answers, code, stderr = drive(
+        HANDSHAKE + [call(2, "queue")], cwd="/",
+        env={**client_env(), run.ENV_MASTER: master})
+    assert 2 in answers, stderr
+    assert answers[2]["result"].get("isError") in (False, None)
+    assert structured(answers[2])["head"]["text"].startswith("**ГОЛОВА ПО ОКРУЖЕНИЮ**")
+    assert code == 0
+
+
+def test_neither_channel_is_the_typed_refusal_naming_both(tmp_path):
+    """Ни аргумента, ни переменной — названный отказ, называющий ОБА канала.
+
+    Отказ, называющий один канал, отправил бы владельца чинить не ту дверь:
+    прежний текст велел задать переменную в блоке `env`, а именно он до сервера
+    и не доходит. Лечение обязано быть исполнимым в том состоянии, в котором
+    печатается.
+    """
+    answers, code, stderr = drive(HANDSHAKE + [call(2, "queue")],
+                                  cwd="/", env=client_env())
+    assert 2 in answers, stderr
+    assert answers[2]["result"]["isError"] is True
+    text = answers[2]["result"]["content"][0]["text"]
+    assert "vault_env_unset" in text
+    assert "--vault-master" in text and run.ENV_MASTER in text
+    assert code == 0
+
+
+def test_reexec_preserves_the_vault_arguments(tmp_path):
+    """Перезапуск под `.venv` несёт аргументы дальше: путь на гарде не теряется.
+
+    Гард — запасной путь чужого интерпретатора, и он `execv`-ит файл заново.
+    Аргумент, потерянный там, дал бы `vault_env_unset` при верно заданном
+    пути — отказ на месте рабочей связки, причём только на этой ветке запуска.
+    """
+    foreign = foreign_python()
+    master = fake_master(tmp_path, "через-перезапуск", "ГОЛОВА ЧЕРЕЗ ПЕРЕЗАПУСК")
+    answers, code, stderr = drive(HANDSHAKE + [call(2, "queue")],
+                                  python=foreign, cwd="/", env=client_env(),
+                                  args=["--vault-master", master])
+    assert 2 in answers, stderr
+    assert answers[2]["result"].get("isError") in (False, None)
+    got = structured(answers[2])
+    assert got["head"]["text"].startswith("**ГОЛОВА ЧЕРЕЗ ПЕРЕЗАПУСК**")
+    assert got["source"].startswith(master)
+    assert code == 0
+
+
+def test_unknown_argument_exits_readably_and_keeps_stdout_clean():
+    """Неизвестный аргумент — читаемый отказ в stderr, а не трассировка в stdout.
+
+    stdout здесь канал JSON-RPC: любая строка там — сломанный кадр, а не
+    сообщение. Клиент, получивший трассировку кадром, увидел бы поломку
+    протокола вместо названной причины.
+    """
+    done = subprocess.run([sys.executable, "-u", SERVER, "--нет-такого-флага"],
+                          input="", capture_output=True, text=True, timeout=60,
+                          cwd="/", env=client_env())
+    assert done.returncode == 2
+    assert done.stdout == ""
+    assert "--нет-такого-флага" in done.stderr
+    assert "Traceback" not in done.stderr
+
+
+def test_help_goes_to_stderr_and_not_into_the_protocol_channel():
+    """Вторая дверь argparse: справка. Она обязана уйти в stderr, как и отказ.
+
+    Отказ argparse печатает в stderr и без правки, а справку — в stdout: снятый
+    `ArgParser` тест на неизвестном аргументе не заметил бы вовсе (измерено
+    мутацией 2026-09-08: удаление гарда не покраснило ни одного теста). Гард,
+    который не умеет краснеть, — не гард, поэтому его предмет меряется здесь.
+    """
+    done = subprocess.run([sys.executable, "-u", SERVER, "--help"],
+                          input="", capture_output=True, text=True, timeout=60,
+                          cwd="/", env=client_env())
+    assert done.stdout == ""
+    assert "--vault-master" in done.stderr and "--vault-clone" in done.stderr
+
+
+def test_clone_argument_resolves_by_the_same_order(monkeypatch):
+    """Обе двери разрешаются одинаково, и пустое значение равно незаданному.
+
+    Клон не читает пока ни один инструмент — тем важнее измерить разрешение
+    прямо: незамеренный флаг «принимается» ровно до первого раза, когда он
+    кому-то понадобится. Пустая строка отбрасывается как пустая переменная в
+    `run.env_path`: иначе `--vault-master ""` дал бы относительный путь от cwd
+    клиента.
+    """
+    parsed = mcp_server.parse_args(["--vault-clone", "  /клон  ",
+                                    "--vault-master", "   "])
+    assert parsed == {run.ENV_CLONE: "/клон"}
+    monkeypatch.setattr(mcp_server, "CLI_VAULT", parsed)
+    monkeypatch.setenv(run.ENV_CLONE, "/клон-из-окружения")
+    monkeypatch.setenv(run.ENV_MASTER, "/мастер-из-окружения")
+    assert mcp_server.vault_path(run.ENV_CLONE) == "/клон"
+    assert mcp_server.vault_path(run.ENV_MASTER) == "/мастер-из-окружения"
+    monkeypatch.delenv(run.ENV_MASTER)
+    assert mcp_server.vault_path(run.ENV_MASTER) is None
+
+
 # ─────────────────────────────── check_turn ──────────────────────────────────
 
 def test_check_turn_red_draft_names_the_missing_slot():
@@ -412,6 +600,10 @@ def test_module_imports_nothing_that_writes():
     зеленел бы на модуле, который пишет. Белый список импортов закрывает класс:
     без `shutil`, `tempfile`, `pathlib`, `subprocess` и `io` писать остаётся
     нечем, кроме `open` и `os.*`, а их и меряет тест ниже.
+
+    `argparse` в списке — разбор путей вольта из командной строки. Своей двери
+    записи он не открывает: единственная — `argparse.FileType`, и она стоит в
+    перечне пишущих ниже.
     """
     tree = ast.parse(open(SERVER, encoding="utf-8").read())
     imported: set[str] = set()
@@ -420,8 +612,8 @@ def test_module_imports_nothing_that_writes():
             imported.update(a.name for a in node.names)
         elif isinstance(node, ast.ImportFrom):
             imported.add(node.module or "")
-    assert imported <= {"__future__", "importlib.util", "os", "re", "sys",
-                        "typing", "run", "mcp.server",
+    assert imported <= {"__future__", "argparse", "importlib.util", "os", "re",
+                        "sys", "typing", "run", "mcp.server",
                         "mcp.server.mcpserver.exceptions"}, sorted(imported)
 
 
@@ -437,7 +629,8 @@ def test_module_has_no_writing_calls():
                "rename", "replace", "truncate", "symlink", "link", "chmod",
                "chown", "utime", "write", "writelines", "write_text",
                "write_bytes", "touch", "copy", "copy2", "copyfile", "move",
-               "mkstemp", "mkdtemp", "NamedTemporaryFile", "TemporaryFile"}
+               "mkstemp", "mkdtemp", "NamedTemporaryFile", "TemporaryFile",
+               "FileType"}
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
@@ -453,6 +646,48 @@ def test_module_has_no_writing_calls():
         if name == "open":
             modes = [a.value for a in node.args[1:2] if isinstance(a, ast.Constant)]
             assert modes and modes[0] == "r", ast.dump(node)
+
+
+def test_no_hardcoded_vault_fallback_in_the_bridge():
+    """У моста отката нет ни константой, ни литералом пути в коде.
+
+    Тот же гард, что `tests/test_vault_env.py::test_no_hardcoded_vault_fallback`
+    держит на `run.py`, — и заведён он потому, что дверей путей вольта стало
+    две: к переменной добавился аргумент запуска. Пока литерала нет, гард
+    ничего не меняет; его предмет — чтобы он не появился незаметно, когда
+    очередной отказ `vault_env_unset` захочется «починить» умолчанием. Умолчание
+    опаснее его отсутствия: прогон на чужой машине читал бы посторонний каталог,
+    и «вольт не адресован» стало бы неотличимо от «вольт прочитан».
+
+    Меряется двумя слоями. Текстовый закрывает машину владельца целиком, включая
+    комментарии: её каталогов в репозитории нет ни в каком виде. Слой AST
+    закрывает класс шире — абсолютный путь литералом В КОДЕ, — и намеренно не
+    трогает докстринги: измеренный cwd клиента (`/mnt/c/…`) в прозе назван, и
+    назван по делу. За литералами гард не идёт: откат через переменную-константу
+    он не увидит, и это его граница, а не молчание о ней.
+    """
+    assert not hasattr(mcp_server, "DEFAULT_MASTER")
+    assert not hasattr(mcp_server, "DEFAULT_CLONE")
+
+    source = open(SERVER, encoding="utf-8").read()
+    assert "vaults/" not in source
+    assert "Obsidian" not in source
+
+    tree = ast.parse(source)
+    docstrings = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef,
+                             ast.FunctionDef, ast.AsyncFunctionDef)):
+            first = node.body[0] if node.body else None
+            if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) \
+                    and isinstance(first.value.value, str):
+                docstrings.add(id(first.value))
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Constant) or id(node) in docstrings:
+            continue
+        if not isinstance(node.value, str):
+            continue
+        assert not node.value.startswith(("/", "~")), (node.lineno, node.value)
 
 
 def test_draft_label_does_not_borrow_the_client_cwd(monkeypatch, tmp_path):
@@ -578,15 +813,22 @@ def test_queue_head_is_the_first_open_item(monkeypatch, vault_pair):
 
 
 def test_queue_env_unset_is_a_named_refusal(monkeypatch, vault_pair):
-    """Переменной нет — назван отказ с лечением, а не умолчание на чей-то каталог."""
+    """Вольт не адресован — назван отказ с лечением, а не умолчание на чей-то каталог.
+
+    Лечение называет оба канала и не велит чинить тот, который до сервера не
+    доходит: блок `env` записи клиента остаётся у процесса Windows (измерено
+    2026-09-08), и текст, посылающий владельца туда, был бы неисполнимым.
+    """
     write_roadmap(vault_pair)
     monkeypatch.setattr(run, "load_config", lambda: queue_config(vault_pair))
+    monkeypatch.setattr(mcp_server, "CLI_VAULT", {})
     monkeypatch.delenv(run.ENV_MASTER, raising=False)
     with pytest.raises(ToolError) as exc:
         mcp_server.queue()
     message = str(exc.value)
     assert "vault_env_unset" in message and run.ENV_MASTER in message
-    assert "env" in message
+    assert mcp_server.VAULT_OPTIONS[run.ENV_MASTER] in message
+    assert "`args` записи сервера" in message
 
 
 def test_queue_missing_file_names_the_absolute_path(monkeypatch, vault_pair):
