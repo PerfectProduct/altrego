@@ -13,6 +13,31 @@
 Область (`scope`): shell_block (по умолчанию) либо document — форма ловится в
 любой строке артефакта, включая прозу и inline-код.
 
+Формы 2026-09-10 (пакет B-P2b-P1; ADR-054, аннотация 2026-09-09):
+  curl_follow_hides_redirect      — `curl -L` без `%{url_effective}`: конечный
+                                    адрес назначает ответ сервера и нигде не
+                                    печатается (NB-45). Лечение curl-специфично:
+                                    в Windows PowerShell 5.1 `curl` — алиас
+                                    `Invoke-WebRequest`, у которого этого поля
+                                    нет вовсе, а редиректы идут по умолчанию;
+                                    форма для IWR/IRM имеет ОБРАТНУЮ полярность
+                                    (голый вызов уже есть форма) и потому
+                                    отдельной записью в этот пакет не входит.
+  reinstall_without_pins.<эко>    — переустановка подвижным указателем вместо
+                                    неизменяемой редакции (NB-44). Ветка держит
+                                    вторую ступень лестницы: строка обязана
+                                    назвать точную редакцию либо сослаться на
+                                    закоммиченный манифест. Верхняя ступень (пин
+                                    хэшем) чекеру НЕДОСТУПНА: он чистая функция
+                                    и файлов не открывает, поэтому `-r <файл>`
+                                    оправдывает не как пин, а как выход из
+                                    предмета. Предел назван, а не опущен.
+Обе стоят `scope: shell_block`, а не `document`: выбор измерен на артефакте
+владельца — `document` давал +11 находок, из них НОЛЬ внутри блока (ход, который
+об установке говорит, а не поручает её). Соседняя `pip_install_outside_venv`
+остаётся `document`: её основание не отменяется, прозаический канал не исчезает,
+он просто не умножается.
+
 Ключ `requires_above` (добавлен 2026-09-04 вместе с формой
 push_workflow_without_scope): форма срабатывает только тогда, когда выше по
 охвату есть строка, совпавшая с этим шаблоном. Он не оправдывает, а наоборот —
@@ -30,6 +55,21 @@ from ..common import RED, Finding, shell_blocks, split_lines
 NAME = "env_presupposition"
 
 HEREDOC_OPEN = re.compile(r"<<-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
+
+# Приведение входа для форм области `shell_block` (заведено 2026-09-10, пакет
+# B-P2b-P1). Три замера показали, что форма судит не то, что исполняется:
+#   `curl -sS … -o y  # -L намеренно не ставим`   — краснела: токен стоял в
+#       комментарии, командой он не является;
+#   `curl -sSL \` + `-w '%{url_effective}' …`     — краснела: оправдание уехало
+#       на строку продолжения, а это та же команда;
+#   `curl -sS -w '%{url_effective}' \` + `-L …`   — МОЛЧАЛА: якорь остался на
+#       первой строке, и настоящий случай проходил мимо.
+# Лечение — вход, а не порог: строка судится как команда, а не как строка файла.
+# Область `document` не трогается намеренно: там `#` есть заголовок markdown, а
+# не комментарий оболочки, и перенос строки — разметка, а не сцепка.
+CONTINUED = re.compile(r"\\\s*$")
+COMMENT_LINE = re.compile(r"^\s*#")
+TRAILING_COMMENT = re.compile(r"\s+#.*$")
 
 DEFAULT_FORMS = [
     {
@@ -78,20 +118,55 @@ DEFAULT_FORMS = [
 ]
 
 
+def commands(numbered: list[tuple[int, str]]) -> list[tuple[int, str]]:
+    r"""Строки охвата, приведённые к командам: без комментариев, со склейкой `\`.
+
+    Номер результата — первая строка склейки: находка указывает на начало
+    команды, а не на её хвост. Комментарий снимается целиком (`^\s*#`) и хвостом
+    (` #…`) — по правилу оболочки `#` начинает комментарий только с начала слова.
+    """
+    out: list[tuple[int, str]] = []
+    pending_ln: int | None = None
+    pending = ""
+    for ln, raw in numbered:
+        text = "" if COMMENT_LINE.match(raw) else TRAILING_COMMENT.sub("", raw)
+        if pending_ln is None:
+            pending_ln, pending = ln, text
+        else:
+            pending = pending + " " + text.lstrip()
+        if CONTINUED.search(pending):
+            pending = CONTINUED.sub("", pending)
+            continue
+        out.append((pending_ln, pending))
+        pending_ln, pending = None, ""
+    if pending_ln is not None:
+        out.append((pending_ln, pending))
+    return out
+
+
 def _line_pattern(form: dict, spans: list[tuple[str, list[tuple[int, str]]]]) -> list[Finding]:
-    pat = re.compile(form["pattern"])
+    # Регистр — данная формы, а не умолчание модуля: PowerShell регистронезависим
+    # по определению языка, и без флага `install-module Pester` молчал бы, а
+    # корректно запиненная `-requiredversion 5.6.1` краснела бы. Правило,
+    # кодирующее соглашение об именовании оболочки вместо класса отказа, — тот же
+    # рецидив, что реестр §D, 2026-09-08 (3), п. 3. У bash-форм регистр значим.
+    flags = re.IGNORECASE if form.get("ignorecase") else 0
+    pat = re.compile(form["pattern"], flags)
     by_line = form.get("absolved_by_line")
-    by_line_re = re.compile(by_line) if by_line else None
+    by_line_re = re.compile(by_line, flags) if by_line else None
     by_above = form.get("absolved_by_above")
-    by_above_re = re.compile(by_above) if by_above else None
+    by_above_re = re.compile(by_above, flags) if by_above else None
     # Условие срабатывания: форма без него не считается сработавшей вовсе.
     needs = form.get("requires_above")
-    needs_re = re.compile(needs) if needs else None
+    needs_re = re.compile(needs, flags) if needs else None
     # Сколько строк выше считаются «измеряющими». None — весь охват (блок/документ).
     above_window = form.get("above_window")
+    as_commands = form.get("scope", "shell_block") != "document"
 
     out: list[Finding] = []
     for _scope_id, numbered in spans:
+        if as_commands:
+            numbered = commands(numbered)
         for pos, (ln, raw) in enumerate(numbered):
             if not pat.search(raw):
                 continue

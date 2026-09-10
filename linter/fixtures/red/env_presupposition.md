@@ -28,3 +28,24 @@ git commit -m "гейт: лимит прогона"
 git push
 gh auth refresh -s workflow
 ```
+
+Тот же класс на чтении по сети и на переустановке зависимости (ADR-054, NB-45 и
+NB-44): за редиректом следуют, не называя конечного адреса, а зависимость ставится
+подвижным указателем вместо неизменяемой редакции.
+
+```bash
+curl -sSL https://example.invalid/policy.json -o /tmp/policy.json
+curl --location https://example.invalid/policy.json -o /tmp/policy.json
+curl -fsSL https://example.invalid/install.sh | bash
+curl -sSL -X POST https://example.invalid/hook -d @/tmp/payload.json
+curl -sSL --max-redirs 3 https://example.invalid/policy.json -o /tmp/policy.json
+npm install express
+```
+
+Та же пара форм в другой оболочке. Маркера над оградой нет намеренно: область
+задаётся списком языков, а не маркером.
+
+```powershell
+Install-Module Pester
+winget install Git.Git
+```

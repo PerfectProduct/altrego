@@ -134,7 +134,7 @@ checkers:
       # расти вместе с полосой; сообщение чекера строится из него.
       gates: [smoke_line, claim_provenance, shell_mech, env_presupposition,
               grep_vacuum, run_id_filter, download_dir, gh_repo_scope,
-              whitespace_diff]
+              whitespace_diff, unguarded_state_write]
 
   - name: shell_mech
     module: linter.checkers.shell_mech
@@ -173,6 +173,111 @@ checkers:
       # выхода, но обрезанный текст ошибки владельцу всё равно не показывает.
       pipestatus_pattern: '\$\{PIPESTATUS\[0\]\}'
       error_filter_pattern: '\bgrep\s+-?\w*\s*[''"]?[^|]*\b(?:error|rejected|fatal)\b'
+
+  # Запись по непроверенному чтению. Отдельный чекер, а не форма shell_mech:
+  # предмет двухдиалектный, а охват блоков у чекера один на все его формы.
+  # Отдай его shell_mech — и windows_path покраснеет на пути `D:\…`, который в
+  # PowerShell верен, а green-фикстура shell_mech, обязанная нести корректный
+  # PowerShell-блок, дала бы green-fixture-red и дисквалификацию на каждом
+  # прогоне (измерено). Расширять shared.shell_langs нельзя тем более: это
+  # девять чекеров из шестнадцати, причём prompt_self_assessment и
+  # sources_trailer молча СУЖАЮТСЯ (linter/prompts.py снимает блок, чей язык
+  # лежит в shell_langs). Поле `scenario` не заводится: S-07 занят shell_mech
+  # (его oracle.checker назван дословно), а сценарии — ярус 2; черновик S-23
+  # уходит владельцу вместе с текстом канона в пакет P3. Это названная цена,
+  # не молчаливый пробел.
+  - name: unguarded_state_write
+    module: linter.checkers.unguarded_state_write
+    kinds: [handoff, spec]
+    rule_id: R-SHELL-003
+    description: >-
+      Запись, меняющая состояние, идёт по значению предыдущего чтения, а
+      проверки, что чтение состоялось, между ними нет. Класс, а не оболочка:
+      форма проверки — данные по диалекту (реестр §D, 2026-09-08 (3), п. 3).
+    config:
+      # Единственная точка расширения охвата, действует только на этот чекер.
+      shell_langs_extra: [powershell, pwsh, ps1, posh]
+      # Блок без метки языка (в том числе под маркером «Handoff for shell»)
+      # судится как bash — сегодняшнее поведение полосы. Нюх по содержимому
+      # здесь не заводится: он был бы догадкой, а не признаком.
+      dialect_default: bash
+      # Голый `cd` — предмет формы cd_without_chain той же полосы. Вторая
+      # находка ТОГО ЖЕ класса на той же строке называла бы один отказ дважды.
+      exclude_patterns:
+        - '^\s*cd\s'
+      # Кавычки маскируются до сверки со словарём эффекта: иначе
+      # `echo "$VER > 1.0"` и `awk '$1 > 0'` читаются как перенаправление.
+      quote_spans:
+        - '"[^"\n]*"'
+        - '''[^''\n]*'''
+      dialects:
+        - name: bash
+          langs: [bash, sh, shell, zsh, console, shell-session]
+          # Чтение связывает ИМЯ с прочитанным состоянием: подстановка команды
+          # либо обратные кавычки. Группа `var` обязательна — по ней держится
+          # связь «запись по прочитанному».
+          read_patterns:
+            - '(?:^|&&\s*|\|\|\s*)\s*(?:(?:local|export|declare|readonly|typeset)\s+)?(?P<var>[A-Za-z_]\w*)=[^\n;&|]*(?:\$\(|`)'
+          # Правая часть, ПОРОЖДАЮЩАЯ значение, состояния не читает.
+          read_exclude_patterns:
+            - '\$\(\s*(?:mktemp|date|uuidgen|seq|printf|echo)\b'
+          effect_patterns:
+            - '\bgit\s+(?:push|commit|tag|reset|checkout|restore|apply)\b'
+            - '\bgh\s+(?:pr|issue|release|repo|secret|variable|workflow)\s+(?:create|merge|close|edit|delete|upload|set|remove)\b'
+            - '\bcurl\b[^|]*?-X\s*(?:POST|PUT|PATCH|DELETE)\b'
+            - '\bsed\s+-i\b'
+            - '\btee\b'
+            - '(?<![0-9&\\])>>?\s*["'']?[~./$\w]'
+            - '^\s*(?:rm|mv|cp|ln)\s'
+            - '\bgcloud\s+\w+\s+(?:deploy|update)\b'
+            - '\bkubectl\s+(?:apply|delete|patch)\b'
+            - '\bdocker\s+push\b'
+          # `|| exit|return` на строке чтения обрывает блок целиком.
+          guard_inline_patterns:
+            - '\|\|\s*\{?\s*(?:exit|return)\b'
+          guard_inline_last_stage_patterns: []
+          guard_between_patterns:
+            - '\[\[?[^\n]*<VAR>[^\n]*\]\]?\s*(?:\|\||&&)\s*\{?\s*(?:exit|return)\b'
+            - '^\s*if\s[^\n]*<VAR>[^\n]*\b(?:exit|return)\b'
+            - '^\s*(?:exit|return)\b'
+          guard_block_patterns:
+            - '^\s*set\s+-[A-Za-z]*e'
+          # SC2155 (ADR-054 NB-43): объявление маскирует код возврата
+          # подстановки, и errexit его не видит — `set -e` тут не оправдание.
+          guard_block_masked_patterns:
+            - '^\s*(?:local|export|declare|readonly|typeset)\s'
+          var_reference: '\$\{?<VAR>\b'
+          ignorecase: false
+        - name: powershell
+          langs: [powershell, pwsh, ps1, posh]
+          read_patterns:
+            - '(?:^|&&\s*|;\s*)\s*(?P<var>\$[A-Za-z_]\w*)\s*=\s*[^\n]*\b(?:Get-Content|Get-Item|Get-ChildItem|Get-ItemProperty|Import-Csv|Import-Clixml|ConvertFrom-Json|Select-String|Get-Process|Get-Service|Test-Path|Invoke-RestMethod|Invoke-WebRequest)\b'
+          read_exclude_patterns: []
+          effect_patterns:
+            - '\b(?:Set-Content|Add-Content|Out-File|Export-Csv|Export-Clixml|Set-ItemProperty|Set-Service)\b'
+            - '\b(?:Remove|Copy|Move|Rename|New)-Item\b'
+            - '\bInvoke-RestMethod\b[^\n]*-Method\s+(?:Post|Put|Patch|Delete)\b'
+            - '(?<![0-9&\\])>>?\s*["'']?[~./$\w]'
+          guard_inline_patterns: []
+          # Только на ПОСЛЕДНЕЙ ступени конвейера чтения: в инциденте
+          # 2026-09-08 упал ConvertFrom-Json ниже по конвейеру, а флаг висел бы
+          # на Get-Content — оправдание зеленило бы собственный повод.
+          guard_inline_last_stage_patterns:
+            - '-ErrorAction\s+["'']?Stop'
+          guard_between_patterns:
+            - 'if\s*\(\s*(?:-not|!)\s*<VAR>\s*\)'
+            - 'if\s*\(\s*\$null\s+-eq\s+<VAR>\s*\)'
+            - 'if\s*\(\s*<VAR>\s+-eq\s+\$null\s*\)'
+            - 'if\s*\(\s*-not\s+\$\?\s*\)'
+            - '^\s*\}\s*catch\b'
+          guard_block_patterns:
+            - '\$ErrorActionPreference\s*=\s*["'']?Stop'
+            - '^\s*try\s*\{'
+          guard_block_masked_patterns: []
+          var_reference: '<VAR>\b'
+          # PowerShell регистронезависим по определению языка: без флага
+          # `set-content` молчал бы, а `if (-Not $j)` не оправдывал бы.
+          ignorecase: true
 
   # Переименован из stop_provenance 2026-08-31: расширение записано структурной
   # мерой в §A реестра правок канона (К1, рецидивы 3 и 4 правила провенанса),
@@ -232,6 +337,18 @@ checkers:
       Предпосылочная форма без предшествующей измеряющей строки.
       Список форм — данные: расширяется здесь, без правки модуля.
     config:
+      # Область по языку ограды расширена 2026-09-10 (пакет B-P2b-P1): формы
+      # `curl_follow_hides_redirect` и `reinstall_without_pins.*` меряют команды,
+      # которые владелец получает и в PowerShell-блоке. Ключ действует только на
+      # этот чекер (run.load_checkers: собственный config побеждает `shared`);
+      # общий список не трогается — его расширение молча СУЖАЕТ два чекера дома
+      # промптов (linter/prompts.py снимает блок, чей язык лежит в shell_langs)
+      # и даёт `shell_mech.windows_path` ложный красный на пути `D:\…`, который
+      # в PowerShell верен. Измерено: по 32 фикстурам дельта 0; на PowerShell-
+      # блоке с `gcloud`/`adb`/`git push`/`gh auth` четыре действующие формы
+      # срабатывают — и это верно, двоичные файлы те же в обеих оболочках.
+      # `long_heredoc` в PowerShell инертен: here-string пишется `@" … "@`.
+      shell_langs_extra: [powershell, pwsh, ps1]
       forms:
         - name: pip_install_outside_venv
           kind: line_pattern
@@ -295,6 +412,106 @@ checkers:
           message: >-
             heredoc длиннее {max_lines} строк: предпосылка о том, что канал доставки
             переживёт вставку такой длины, не измерена
+
+        # ── Формы 2026-09-10 (пакет B-P2b-P1; ADR-054, аннотация 2026-09-09,
+        # NB-45 и NB-44). Обе стоят `scope: shell_block`, а не `document`, и
+        # выбор измерен, а не предпочтён: на калибровочном артефакте владельца
+        # (05-inbox/archive/altrego-calibration-2026-08-31-09-01/session-2.md)
+        # `document` давал +11 находок, из них НОЛЬ внутри блока — все они ход,
+        # который об установке ГОВОРИТ, а не поручает её. Сужение по признаку
+        # (блок), а не по частоте; признак совпадает с рамкой пакета.
+        # Соседняя `pip_install_outside_venv` остаётся `document` — её основание
+        # («инструкция в прозе исполняется так же буквально») не отменяется,
+        # прозаический канал у полосы не исчезает, он просто не умножается.
+
+        - name: curl_follow_hides_redirect
+          kind: line_pattern
+          scope: shell_block
+          # Якорь на `curl` в той же команде; разрыв не переходит `|`, `;`, `&` —
+          # иначе `-L` чужой команды (`gh run list -L 1`, `grep -L`) дал бы
+          # ложное срабатывание (измерено). Токен флага обязан кончаться
+          # пробелом или концом строки: так отсекается `report-LOG.txt`.
+          # Регистр значим: `-L` и `-l` у curl — разные флаги.
+          pattern: '\bcurl\b[^|;&\n]*?(?:\s--location(?:-trusted)?\b|\s-[A-Za-z]*L[A-Za-z]*(?=\s|$))'
+          # Оправдывает ПОЛЕ формата, а не флаг `-w`: `%{http_code}` не называет
+          # ничего. `--max-redirs 0` (и форма через `=`) оправдывает не тем, что
+          # ограничивает, а тем, что делает неназванное приземление невозможным:
+          # curl отказывает на первом же 3xx, то есть восстановлено умолчание,
+          # которое NB-45 называет образцом fail-closed. При N >= 1 не
+          # оправдывает: `--max-redirs` отвечает только на третью из трёх gotcha
+          # (петля), а «куда я пришёл» и «что туда ушло» называет только
+          # конечный адрес. Расширить оправдание до любого N значило бы сменить
+          # инвариант ветки с «адрес назван» на «цепь ограничена».
+          # Оправдания строкой ВЫШЕ нет намеренно: зонд выше меряет ДРУГОЙ
+          # запрос — редирект не обязан совпасть у HEAD и у POST.
+          absolved_by_line: '(%\{url_effective\}|--max-redirs[=\s]+0(?![0-9]))'
+          message: >-
+            `curl -L` без `%{url_effective}` на той же команде: конечный адрес
+            назначает ответ сервера, нигде не печатается и в вердикт не входит —
+            байты неизвестного происхождения при коде выхода 0; на 301/302/303 POST
+            молча превращается в GET, и запись, которой не было, читается как
+            сделанная. Лечение curl-специфично: в Windows PowerShell 5.1 `curl` —
+            алиас `Invoke-WebRequest`, у которого нет ни `-L`, ни `%{url_effective}`
+
+        # Ветка `reinstall_without_pins` — одна по классу, несколько записей по
+        # экосистемам: оправдания у них разные, и общая альтернация оправдывала
+        # бы перекрёстно (пин образа снимал бы находку на пакете) и не могла бы
+        # назвать нужную ступень в сообщении. Имя ветки несёт префикс, чтобы
+        # счёт и мутации велись по ветке, а не по каждой записи.
+        # Ступень лестницы NB-44 — вторая (точная редакция либо ссылка на
+        # закоммиченный манифест). Верхняя (пин хэшем) чекеру недоступна: он
+        # чистая функция и файлов не открывает; предел назван, а не опущен.
+        - name: reinstall_without_pins.python
+          kind: line_pattern
+          scope: shell_block
+          pattern: '(?:\bpip3?\s+install\b|\bpipx\s+install\b|\buv\s+pip\s+install\b|\buv\s+add\b)'
+          # `-r`/`--requirement` и `-e`/`--editable` — НЕ пин, а выход из
+          # предмета: состав файла линтер не читает, и красный здесь был бы
+          # вердиктом о непрочитанном содержимом.
+          absolved_by_line: '(==|@[0-9a-f]{40}(?![0-9a-f])|--require-hashes\b|(?<![\w-])-r(?![\w-])|--requirement\b|(?<![\w-])-e(?![\w-])|--editable\b)'
+          message: >-
+            установка называет пакет, но не редакцию: повтор того же блока ставит
+            другое, и зелёный прошлого прогона о нынешней среде не говорит ничего.
+            Пин — `==<версия>` либо `git+…@<sha>`; `-r <файл>` снимает вопрос,
+            перенося его в закоммиченный манифест (ADR-054 NB-44)
+
+        - name: reinstall_without_pins.node
+          kind: line_pattern
+          scope: shell_block
+          # Шаблон требует имя пакета после глагола: голый `npm install` и
+          # `npm ci` идут по lock-файлу и предметом не являются вовсе.
+          pattern: '\b(?:npm\s+(?:install|i)|pnpm\s+add|yarn\s+add)\b(?:\s+-{1,2}[\w-]+)*\s+(?!-)[@A-Za-z][\w@/.-]*'
+          # Диапазоны `^`/`~` не оправдывают: это нижняя ступень лестницы.
+          absolved_by_line: '(@\d+\.\d+\.\d+(?![\w.])|#[0-9a-f]{7,40}\b)'
+          message: >-
+            пакет назван именем без точной редакции (диапазон `^`/`~` либо ничего) —
+            повтор блока ставит другое. Пин `pkg@1.2.3` либо `#<sha>`; `npm ci`
+            против lock-файла предметом не является (ADR-054 NB-44)
+
+        - name: reinstall_without_pins.psmodule
+          kind: line_pattern
+          scope: shell_block
+          # PowerShell регистронезависим: без `ignorecase` `install-module`
+          # молчал бы, а `-requiredversion 5.6.1` не оправдывал бы. Правило,
+          # кодирующее регистр имён оболочки, — правило про оболочку, а не про
+          # класс отказа (реестр §D, 2026-09-08 (3), п. 3).
+          ignorecase: true
+          pattern: '\bInstall-(?:Module|Script|Package)\b'
+          absolved_by_line: '-RequiredVersion\b'
+          message: >-
+            `Install-Module` без `-RequiredVersion`: галерея отдаёт последнюю, и
+            повтор блока ставит другое. Тот же класс, что установка без `==`;
+            форма пина зависит от оболочки, класс — нет
+
+        - name: reinstall_without_pins.winget
+          kind: line_pattern
+          scope: shell_block
+          ignorecase: true
+          pattern: '\b(?:winget|choco|scoop)\s+install\b'
+          absolved_by_line: '(--version[=\s]\S|(?<![\w-])-v\s+\S)'
+          message: >-
+            пакет из каталога Windows без `--version`: ставится текущая редакция
+            каталога, и повтор блока ставит другое
 
   - name: grep_vacuum
     module: linter.checkers.grep_vacuum

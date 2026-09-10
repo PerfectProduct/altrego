@@ -81,7 +81,7 @@ def test_green_fixture_stays_silent(capsys, name):
 
 
 @pytest.mark.parametrize("name,added", [("shell_mech", 2),
-                                        ("env_presupposition", 2)])
+                                        ("env_presupposition", 11)])
 def test_previous_forms_did_not_drop(capsys, name, added):
     """Прежние счёты не падают: фикстура дополнена, а не переписана."""
     _code, lines = fixture_findings(capsys, "red", name)
