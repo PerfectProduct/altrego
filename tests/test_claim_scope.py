@@ -34,6 +34,7 @@ FIXTURES = os.path.join(ROOT, "linter", "fixtures")
 CLAIM = "claim_provenance"
 REPO = "repo_state_claim"
 COUNT_FORM = "count_predicate_unmeasured"
+DATE_FORM = "date_literal_unmeasured"
 SCOPE_FORM = "command_scope_narrower_than_claim"
 
 # Ноги 1–3 на red-фикстуре claim_provenance на момент заведения ноги 4.
@@ -83,18 +84,23 @@ def test_red_claim_fixture_carries_count_form(capsys):
 
 
 def test_previous_legs_did_not_drop(capsys):
-    """Страж падения: десятка разложена по ногам, иначе она их прячет.
+    """Страж падения: счёт разложен по ногам, иначе он их прячет.
 
     Калибровка требует ≥1 находки своего чекера на своей red-фикстуре. У
-    `claim_provenance` их четыре ноги; замолчи три из них, калибровка всё равно
-    напечатала бы `[ok]`. Разложение по префиксу — то единственное, что делает
-    смерть ноги видимой.
+    `claim_provenance` пять ног; замолчи четыре из них, калибровка всё равно
+    напечатала бы `[ok]` — ни красного, ни строки «не измерено», ни кода
+    выхода. Разложение по префиксу формы — то единственное, что делает смерть
+    ноги видимой, и потому этот тест, а не калибровка, есть сторож ноги 5
+    (мутация M-D6). Двоичного разложения мало: пока «старым» считалось «без
+    префикса `count_predicate_unmeasured`», находка ноги 5 попадала бы в тот же
+    мешок и арифметика оставалась бы верной при мёртвых ногах 1–3.
     """
     _code, lines = fixture_findings(capsys, "red", CLAIM)
-    new = [ln for ln in lines if f"[{COUNT_FORM}]" in ln]
-    old = [ln for ln in lines if f"[{COUNT_FORM}]" not in ln]
-    assert (len(old), len(new)) == (LEGS_1_3_BASELINE, 2)
-    assert len(lines) == LEGS_1_3_BASELINE + 2
+    counted = [ln for ln in lines if f"[{COUNT_FORM}]" in ln]
+    dated = [ln for ln in lines if f"[{DATE_FORM}]" in ln]
+    untagged = [ln for ln in lines if "[" not in ln.split(CLAIM, 1)[1]]
+    assert (len(untagged), len(counted), len(dated)) == (LEGS_1_3_BASELINE, 2, 2)
+    assert len(lines) == LEGS_1_3_BASELINE + 4
 
 
 def test_green_claim_fixture_stays_silent(capsys):
@@ -392,3 +398,247 @@ def test_count_form_lists_live_in_the_manifest(manifest):
     assert cfg["count_gap_words"] == 1
     assert "чекер\\w*" in cfg["countable_nouns"]
     assert not any(any(ch.isdigit() for ch in p) for p in cfg["count_quantifier_patterns"])
+
+
+# ── date_literal_unmeasured: на строку ───────────────────────────────────
+
+STOP_BLOCK = ("## Стоп-условия пакета\n\n"
+              "- Сегодня — 2026-09-10\n"
+              "- Ветка впереди main ровно на 7 коммитов\n")
+
+
+@pytest.mark.parametrize("line", [
+    "Сегодня — 2026-09-10.",
+    "Сегодняшняя дата 2026-09-10 уходит в имя отчёта.",
+    "Дата этого хода — 2026-09-10.",
+    "Today is 2026-09-10.",
+])
+def test_date_literal_reddens(checkers, line):
+    assert marked(check(checkers, CLAIM, line + "\n"), DATE_FORM)
+
+
+@pytest.mark.parametrize("line,stripped", [
+    ("Сегодня по среде — 2026-09-10.",
+     "Сегодня — 2026-09-10."),
+    ("Дата этого хода — 2026-09-10 — выдача `date -u +%F`.",
+     "Дата этого хода — 2026-09-10 — выдача есть."),
+    ("Сегодня — 2026-09-10: дата продиктована владельцем в этом ходе.",
+     "Сегодня — 2026-09-10: дата взята в этом ходе."),
+    ("Сегодня — 2026-09-10, снято `git log -1 --format=%ct` в этом ходе.",
+     "Сегодня — 2026-09-10, снято в этом ходе."),
+])
+def test_a_named_source_absolves_the_date(checkers, line, stripped):
+    """По одному оправданию на случай — и у каждого свой живой контроль.
+
+    `stripped` — та же строка без одного оправдывающего оборота. Без этой
+    половины пары тест прошёл бы и при мёртвом триггере: молчание ноги
+    неотличимо от молчания детектора. Ровно на этом в пакете P2 три мутации из
+    девяти вернулись зелёными с первого прогона.
+    """
+    assert marked(check(checkers, CLAIM, line + "\n"), DATE_FORM) == []
+    assert marked(check(checkers, CLAIM, stripped + "\n"), DATE_FORM)
+
+
+def test_environment_named_absolves(checkers):
+    """Мутация M-D3: убрать канал среды из `date_source_patterns`.
+
+    Пара: та же строка без двух оправдывающих слов обязана краснеть, иначе тест
+    прошёл бы при мёртвом триггере, а не при живом оправдании. Этот слот несёт
+    16 из 20 сырых попаданий калибровочного набора — соглашение полосы.
+    """
+    assert marked(check(checkers, CLAIM, "Сегодня по среде — 2026-09-10.\n"),
+                  DATE_FORM) == []
+    assert marked(check(checkers, CLAIM, "Сегодня — 2026-09-10.\n"), DATE_FORM)
+
+
+def test_the_log_tail_is_not_a_source(checkers):
+    """Список оправданий положительный: годится только то, что в нём стоит.
+
+    «Взята из хвоста лога» источник называет — и расширение контракта от
+    2026-08-25 исключает именно этот канал дословно.
+    """
+    assert marked(check(checkers, CLAIM,
+                        "Дата этого хода — 2026-09-10, взята из хвоста лога.\n"),
+                  DATE_FORM)
+
+
+def test_deictic_coordinated_with_a_past_date_is_not_a_claim(checkers):
+    """Мутация M-D1: заменить управление окном в символах.
+
+    «пропущенный случай 2026-08-30 и сегодняшний» — литерал назван как ДРУГОЙ
+    член пары, то есть заведомо не сегодняшний; сегодняшняя дата в строке не
+    написана вовсе. Окно в символах свело бы их в пару. Наблюдено на
+    калибровочном наборе дважды (`session-2.md:543`, `:564`).
+
+    Пара: та же грамматика с литералом в позиции управления обязана краснеть —
+    иначе тест молчал бы оттого, что триггер мёртв, а не оттого, что сужение
+    работает.
+    """
+    text = "Занести обе строки в §B (пропущенный случай 2026-08-30 и сегодняшний).\n"
+    assert marked(check(checkers, CLAIM, text), DATE_FORM) == []
+    assert marked(check(checkers, CLAIM, "Занести обе строки: сегодня — 2026-08-30.\n"),
+                  DATE_FORM)
+
+
+def test_a_deictic_governing_a_command_is_not_a_date_claim(checkers):
+    """Второй наблюдённый ложный класс (`session-2.md:539`).
+
+    «Сегодняшний `pip install --user` — третий случай» — дейксис управляет
+    командой; литералы в строке суть даты чужих записей реестра.
+    """
+    text = ("Правило стоит со счётом 1 (2026-08-28, имя по памяти). "
+            "Сегодняшний `pip install --user` — третий случай.\n")
+    assert marked(check(checkers, CLAIM, text), DATE_FORM) == []
+    # Живой контроль: тот же дейксис, управляющий литералом, — краснеет.
+    assert marked(check(checkers, CLAIM,
+                        "Правило стоит со счётом 1. Сегодня — 2026-08-28.\n"),
+                  DATE_FORM)
+
+
+def test_date_gap_is_named_and_bounded(checkers):
+    """Мутация M-D2: `date_gap_words` 3 → 8.
+
+    Мера управления: дейксис, не дальше `date_gap_words` слов, затем литерал.
+    Предел назван, а не опущен. Пара в обе стороны на одной мере: зачин полосы
+    с тремя промежуточными словами обязан СРАБОТАТЬ (иначе оправдание стояло бы
+    мёртвым слотом), а четыре слова — уже не управление.
+    """
+    assert marked(check(checkers, CLAIM, "Сегодня три записи лога дают 2026-08-30.\n"),
+                  DATE_FORM) == []
+    assert marked(check(checkers, CLAIM, "Сегодня уже стало поздно 2026-09-10.\n"),
+                  DATE_FORM)
+
+
+def test_a_date_in_a_stop_block_is_judged(checkers):
+    """Мутация M-D4: заставить ногу 5 пропускать `stop_lines`.
+
+    Нога 1 гасит литерал даты маской `ignore_patterns` (иначе `2026-09-10`
+    читался бы как три голых числа), поэтому дата в блоке стоп-условия сегодня
+    не судится ни одной ногой — это и есть пробел, названный §D реестра. Нога 5
+    строит своё множество пропуска: `judged` засеян `stop_lines`, и
+    переиспользование его дословно вернуло бы мутанта.
+
+    Пара — положительный контроль того, что блок ВООБЩЕ распознан: без него
+    прозаическая строка после маркера в блок не входит (`_blocks` вернёт
+    `[(0, 0)]`), тест прошёл бы и с сужением, и без него, и мерил бы ничто.
+    """
+    messages = check(checkers, CLAIM, STOP_BLOCK)
+    assert any(m.startswith("число 7") for m in messages)
+    assert marked(messages, DATE_FORM)
+
+
+def test_an_irrealis_date_is_not_a_claim(checkers):
+    """Мутация M-D9: снять гард наклонения у ноги 5.
+
+    Ход, вводящий эту ногу, сам несёт строки такой формы.
+    """
+    assert marked(check(checkers, CLAIM,
+                        "Если бы сегодня было 2026-09-10, штамп ушёл бы вчерашним.\n"),
+                  DATE_FORM) == []
+    assert marked(check(checkers, CLAIM,
+                        "Сегодня было 2026-09-10, штамп ушёл вчерашним.\n"), DATE_FORM)
+
+
+def test_a_scenario_frame_date_is_not_a_claim(checkers):
+    """Мутация M-D9, вторая форма гарда: рамка «Дано / Действие / Ожидаемо»."""
+    assert marked(check(checkers, CLAIM,
+                        "Дано: сегодня — 2026-09-10. Действие: запись в лог.\n"),
+                  DATE_FORM) == []
+    assert marked(check(checkers, CLAIM,
+                        "Проверено: сегодня — 2026-09-10. Запись в лог.\n"), DATE_FORM)
+
+
+def test_a_bare_date_literal_is_not_a_claim(checkers):
+    """Умышленное несовпадение: голая дата без дейксиса.
+
+    Имя файла отчёта и идентификатор чужой записи — ДОПУСТИМЫЕ попадания
+    (контракт: имена, создаваемые самим ходом, и идентификаторы, продиктованные
+    владельцем; CLAUDE.md п. 8а: цитирование чужих дат как дат акта). Варианты
+    D2–D4 пакета P2 встали ровно на том, что держали их внутри триггера.
+    """
+    for line, control in (
+        ("Отчёт лёг в `05-inbox/raw/otchet-2026-09-04.md`.",
+         "Отчёт за сегодня — 2026-09-04."),
+        ("Owner-акт 2026-08-30 (2) о аддитивной дозаписи.",
+         "Сегодня — 2026-08-30, owner-акт (2) о аддитивной дозаписи."),
+    ):
+        assert marked(check(checkers, CLAIM, line + "\n"), DATE_FORM) == []
+        # Живой контроль: тот же литерал под дейксисом — краснеет. Молчит
+        # именно отсутствие дейксиса, а не неспособность ноги увидеть дату.
+        assert marked(check(checkers, CLAIM, control + "\n"), DATE_FORM)
+
+
+def test_date_inside_a_fence_is_not_a_claim(checkers):
+    """Мутация M-D7: снять пропуск огороженных строк.
+
+    Пара: то же предложение вне ограды обязано краснеть — иначе тест прошёл бы
+    оттого, что триггер не совпадает с текстом вида `echo`, а не оттого, что
+    ограда работает.
+    """
+    assert marked(check(checkers, CLAIM, block("echo 'Сегодня — 2026-09-10'")),
+                  DATE_FORM) == []
+    assert marked(check(checkers, CLAIM, "Сегодня — 2026-09-10\n"), DATE_FORM)
+
+
+def test_source_named_on_the_next_line_absolves(checkers):
+    """Мутация M-D8: `claim_window` → 0.
+
+    Окно у ноги 5 не своё: она берёт существующий `claim_window`, и оправдание
+    на соседней строке абзаца работает так же, как у ног 2 и 3. Пара: та же
+    строка без соседа обязана краснеть.
+    """
+    text = ("Сегодня — 2026-09-10, и запись идёт этим же ходом,\n"
+            "дата снята `date -u +%F` в этом же ходу.\n")
+    assert marked(check(checkers, CLAIM, text), DATE_FORM) == []
+    assert marked(check(checkers, CLAIM,
+                        "Сегодня — 2026-09-10, и запись идёт этим же ходом,\n"),
+                  DATE_FORM)
+
+
+def test_a_line_judged_by_an_earlier_leg_is_not_dated_twice(checkers):
+    """Ноги одного класса не называют один отказ дважды.
+
+    Нога 5 строит своё множество пропуска из строк, на которых НАПЕЧАТАЛИ ноги
+    2–4, но без `stop_lines`, которыми `judged` засеян.
+    """
+    text = "Все чекеры полосы зелёные, сегодня — 2026-09-10.\n"
+    messages = check(checkers, CLAIM, text)
+    assert len(messages) == 1
+    assert marked(messages, COUNT_FORM)
+    # Живой контроль: снять счётное притязание — и та же дата краснеет ногой 5.
+    assert marked(check(checkers, CLAIM, "Чекеры полосы зелёные, сегодня — 2026-09-10.\n"),
+                  DATE_FORM)
+
+
+def test_the_date_leg_is_silent_on_a_count_predicate(checkers):
+    """Обратное направление: счётное утверждение — предмет ноги 4."""
+    text = "Все чекеры полосы зелёные.\n"
+    assert marked(check(checkers, CLAIM, text), DATE_FORM) == []
+    assert marked(check(checkers, CLAIM, text), COUNT_FORM)
+
+
+def test_live_channel_slot_is_silent_on_the_date_form(checkers):
+    """Разграничение с соседом измерением, а не доводом.
+
+    У `live_channel_slot` триггер — носитель плюс предикативный глагол
+    состояния в одной клаузе; «дата» в `carrier_nouns` не стоит, а дейксис
+    глаголом состояния не является.
+    """
+    text = "Сегодня — 2026-09-10.\n"
+    assert check(checkers, "live_channel_slot", text) == []
+    assert marked(check(checkers, CLAIM, text), DATE_FORM)
+
+
+def test_date_form_lists_live_in_the_manifest(manifest):
+    """Мутация M-D5: списки — данные, а не код.
+
+    Порог в дейксис не зашит, литерал вынесен ключом, окно у ноги не своё.
+    """
+    cfg = {c["name"]: c for c in manifest["checkers"]}[CLAIM]["config"]
+    assert cfg["date_gap_words"] == 3
+    assert cfg["date_literal_pattern"] == r"\b20\d{2}-\d{2}-\d{2}\b"
+    assert any("сегодня" in p for p in cfg["date_deixis_patterns"])
+    assert not any(any(ch.isdigit() for ch in p) for p in cfg["date_deixis_patterns"])
+    assert not any("хвост" in p for p in cfg["date_source_patterns"])
+    assert any("SOURCE_DATE_EPOCH" in p for p in cfg["date_source_patterns"])
+    assert "date_window" not in cfg and cfg["claim_window"] == 1
