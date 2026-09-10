@@ -217,12 +217,12 @@ def test_absent_or_zero_limit_is_red(monkeypatch, capsys, tmp_path, limits):
 # ───────────────────── калибровка на каждом прогоне ──────────────────────
 
 def test_calibration_runs_in_fast(monkeypatch, capsys, tmp_path):
-    """`--fast` несёт калибровку: 17 чекеров, все `ok`, находок ноль."""
+    """`--fast` несёт калибровку: 18 чекеров, все `ok`, находок ноль."""
     code, _seen, out = run_fast(monkeypatch, capsys, config_with(tmp_path), *GREEN)
     line = next(ln for ln in out.splitlines() if ln.startswith("- калибровка: "))
     assert code == 0
-    assert line.count("[ok]") == 17
-    assert "артефактов: 17; чекеров: 17; находок: 0" in out
+    assert line.count("[ok]") == 18
+    assert "артефактов: 18; чекеров: 18; находок: 0" in out
 
 
 def test_silent_red_fixture_disqualifies_checker(monkeypatch, capsys, tmp_path):

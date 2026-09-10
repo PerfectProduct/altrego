@@ -48,6 +48,35 @@
 рассматриваются (команда и её выдача — не утверждение оркестратора), и строки,
 уже разобранные первой ногой, второй раз не судятся.
 
+4. **Счётное утверждение.** Квантор исчерпанности (`count_quantifier_patterns`:
+   все, ни одного, ни одной, единственный, полностью, целиком), **управляющий**
+   счётным существительным инвентаря полосы (`countable_nouns`), — «все чекеры
+   зелёные», «ни одной находки на green-фикстурах нет». Оправдания — те же три,
+   что у ног 2 и 3, плюс пометка предсказания (`prediction_pattern`): строка,
+   объявленная ожиданием, притязания не делает.
+
+   Нога заведена пакетом B-P2b-P2 (2026-09-10). Три сужения, каждое по признаку
+   и каждое измерено, а не выбрано:
+
+   * **Числительное в триггер не входит.** Счёт — предмет ног 1 и 2; ловить его
+     здесь значило бы завести второе правило того же смысла. Измерено на
+     фикстурах: с числительными нога даёт две находки на green-корпусе
+     (`green/artifact_integrity.md` «пяти чекерам», `green/smoke_line.md` «ровно
+     одна строка») — то есть красит гейт `linter-fast-green`. Голый счётчик
+     («17 чекеров») не ловит сегодня ни одна нога: пробел назван, не закрыт.
+   * **Управление, а не окно в символах.** Квантор стоит перед существительным
+     не дальше `count_gap_words` слов. Мера соседства окном (как `pair_window`
+     у `live_channel_slot`) сводит в пару дистрибутивное «каждая предпосылка
+     измеряется строкой выше» — квантор там управляет соседним словом, а не
+     счётным. Измерено: окно в 40 символов даёт две находки на green-корпусе,
+     управление — ноль.
+   * **Ирреалис и рамка гипотезы.** Строка с « бы » («не покрасило бы ни одного
+     теста») и строка в рамке сценария («Дано: … Действие: … Ожидаемо: …»)
+     утверждения не делают. Обе формы наблюдены на корпусе полосы.
+
+   Строки, уже разобранные ногами 1–3, ногой 4 не судятся: вторая находка того
+   же класса на той же строке называла бы один отказ дважды.
+
 Списки форм и окна — данные манифеста: расширяются без правки модуля.
 
 Чистая функция: ни сети, ни LLM, ни файловых эффектов.
@@ -109,6 +138,39 @@ DEFAULT_UNVERIFIED = (
 )
 
 NUMBER = re.compile(r"(?<![\w.])\d+(?![\w.])")
+
+# ── нога 4 (пакет B-P2b-P2) ──────────────────────────────────────────────
+# Кванторы исчерпанности. Числительных здесь нет намеренно: счёт — предмет ног
+# 1 и 2 (см. докстроку), и «17 чекеров» этой ногой не судится.
+DEFAULT_COUNT_QUANTIFIERS = [
+    r"все[хм]?",
+    r"ни\s+одного",
+    r"ни\s+одной",
+    r"ни\s+один",
+    r"ни\s+одна",
+    r"единственн\w+",
+    r"полностью",
+    r"целиком",
+]
+# Счётный инвентарь полосы: то, что перечисляется командой. Список — данные.
+DEFAULT_COUNTABLE_NOUNS = [
+    r"чекер\w*", r"сценари\w*", r"тест\w*", r"фикстур\w*", r"находк\w*",
+    r"форм\w*", r"правил\w*", r"коммит\w*", r"пут(?:ь|и|ей|ям|ями)",
+    r"строк\w*", r"файл\w*", r"канал\w*", r"пункт\w*", r"детектор\w*",
+    r"прогон\w*", r"артефакт\w*", r"ход\w*", r"блок\w*", r"отч[ёе]т\w*",
+    r"запис(?:ь|и|ей)",
+]
+# Ирреалис: «не покрасило БЫ ни одного теста» — не утверждение, а
+# контрфактическое рассуждение о форме.
+DEFAULT_IRREALIS = r"(?:^|\s)бы(?:\s|,|$)"
+# Рамка сценария: «Дано: … Действие: … Ожидаемо: …» — гипотеза корпуса, а не
+# притязание хода. Ищется в той же строке: в scenarios/*.yaml и в разборе они
+# стоят подряд одной строкой.
+DEFAULT_HYPOTHETICAL_FRAME = r"(?:^|\s)(?:Дано|Действие|Ожидаемо\w*|Ожидание)\s*:"
+# Отказ от притязания, узкий: «ожидание», «предсказание». Слова «оценка» здесь
+# нет по той же причине, что и в claim_unverified_pattern (рецидив 3).
+DEFAULT_PREDICTION = r"(ожидан\w*|ожидаемо\w*|предсказан\w*|предсказ\w*|прогноз)"
+COUNT_FORM = "count_predicate_unmeasured"
 LIST_ITEM = re.compile(r"^\s*([-*+]|\d+[.)])\s+")
 
 
@@ -165,6 +227,25 @@ def check(text: str, config: dict) -> list[Finding]:
                             re.IGNORECASE)
     claim_window = int(config.get("claim_window", 1))
 
+    quantifiers = _compile(config.get("count_quantifier_patterns")
+                           or DEFAULT_COUNT_QUANTIFIERS)
+    countable = config.get("countable_nouns") or DEFAULT_COUNTABLE_NOUNS
+    gap_words = int(config.get("count_gap_words", 1))
+    irrealis = re.compile(config.get("irrealis_pattern", DEFAULT_IRREALIS),
+                          re.IGNORECASE)
+    frame = re.compile(config.get("hypothetical_frame_pattern",
+                                  DEFAULT_HYPOTHETICAL_FRAME), re.IGNORECASE)
+    prediction = re.compile(config.get("prediction_pattern", DEFAULT_PREDICTION),
+                            re.IGNORECASE)
+    # «Квантор управляет существительным» меряется порядком и числом слов между
+    # ними, а не окном в символах: окно сводит в пару дистрибутивное «каждая
+    # предпосылка измеряется строкой выше» (измерено: две находки на
+    # green-корпусе, то есть красный гейт).
+    count_re = [re.compile(
+        r"\b(?:%s)\b(?:\s+\w+){0,%d}\s+(?:%s)\b" % (q.pattern, gap_words,
+                                                       "|".join(countable)),
+        re.IGNORECASE) for q in quantifiers]
+
     lines = split_lines(text)
     findings: list[Finding] = []
 
@@ -189,6 +270,8 @@ def check(text: str, config: dict) -> list[Finding]:
 
     # ── ноги 2 и 3: проза хода ───────────────────────────────────────────
     blocked = in_block_lines(text, config)
+    # Строки, уже разобранные ногами 1–3: нога 4 их не судит второй раз.
+    judged: set[int] = set(stop_lines)
     for idx, line in enumerate(lines):
         if idx in stop_lines or (idx + 1) in blocked:
             continue
@@ -202,6 +285,7 @@ def check(text: str, config: dict) -> list[Finding]:
         near = "\n".join(lines[lo:hi + 1])
         if command.search(near) or read.search(near) or unverified.search(near):
             continue
+        judged.add(idx)
         if est is not None:
             findings.append(Finding(
                 idx + 1, NAME, RED,
@@ -217,6 +301,30 @@ def check(text: str, config: dict) -> list[Finding]:
                 f"провенанса чтения и без пометки «не проверено»: адрес — такое же "
                 f"утверждение о внешнем предмете, как число, и §11 вместо §7 "
                 f"неотличим от прочитанного, пока рядом не сказано, чем читали"))
+
+    # ── нога 4: счётное утверждение (пакет B-P2b-P2) ─────────────────────
+    for idx, line in enumerate(lines):
+        if idx in judged or (idx + 1) in blocked:
+            continue
+        hit = next((m for m in (c.search(line) for c in count_re) if m), None)
+        if hit is None:
+            continue
+        # Ирреалис и рамка гипотезы меряются на самой строке: утверждение
+        # снимает не сосед, а наклонение того же высказывания.
+        if irrealis.search(line) or frame.search(line):
+            continue
+        lo, hi = max(0, idx - claim_window), min(len(lines) - 1, idx + claim_window)
+        near = "\n".join(lines[lo:hi + 1])
+        if (command.search(near) or read.search(near) or unverified.search(near)
+                or prediction.search(near)):
+            continue
+        findings.append(Finding(
+            idx + 1, NAME, RED,
+            f"[{COUNT_FORM}] счётное утверждение «{hit.group(0).strip()}» без "
+            f"соседней команды, перечислившей множество: квантор исчерпанности "
+            f"притязает на весь набор, а из хода не видно, чем набор получен — "
+            f"«все» и «ни одного» проверяются перечислением, и владелец читает "
+            f"их как измеренные ровно так же, как число"))
 
     findings.sort(key=lambda f: f.line)
     return findings

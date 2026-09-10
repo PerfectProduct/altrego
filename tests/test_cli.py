@@ -20,14 +20,14 @@ RED_ONE = os.path.join(ROOT, "linter", "fixtures", "red", "whitespace_diff.md")
 
 
 def test_green_fixture_corpus_is_not_empty():
-    assert len(GREEN) == 17
+    assert len(GREEN) == 18
 
 
 def test_fast_green_exit_zero(capsys):
     assert run.main(["--fast", *GREEN, "--no-report"]) == 0
     out = capsys.readouterr().out
     assert "- красных: 0" in out
-    assert "артефактов: 17; чекеров: 17; находок: 0" in out
+    assert "артефактов: 18; чекеров: 18; находок: 0" in out
 
 
 def test_fast_red_exit_one(capsys):
@@ -52,7 +52,7 @@ def test_kind_spec_skips_handoff_only_checkers(capsys):
     assert skipped.startswith("Не запускались на этом виде: ")
     names = skipped.split(": ", 1)[1].split(", ")
     assert len(names) == 10 and "turn_end" in names and "sources_trailer" in names
-    assert "чекеров: 7;" in out
+    assert "чекеров: 8;" in out
 
 
 def test_kind_default_is_handoff(capsys):
@@ -107,7 +107,7 @@ RED_ALL = sorted(glob.glob(os.path.join(ROOT, "linter", "fixtures", "red", "*.md
 @pytest.mark.parametrize("path", GREEN + RED_ALL,
                          ids=[os.path.relpath(p, ROOT) for p in GREEN + RED_ALL])
 def test_run_text_equals_run_file(path):
-    """Черновик меряется тем же проходом, что и файл, — по всем 34 фикстурам.
+    """Черновик меряется тем же проходом, что и файл, — по всем 36 фикстурам.
 
     Мост MCP (linter/mcp_server.py) зовёт `run_text`, прогон владельца —
     `run_file`. Разойдись они, «зелёный до выдачи» и «зелёный в прогоне» стали
