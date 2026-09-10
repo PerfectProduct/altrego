@@ -389,7 +389,7 @@ def test_checker_kinds_are_measured_not_inherited(manifest):
 def test_checker_binds_the_provenance_rule(manifest):
     entry = {c["name"]: c for c in manifest["checkers"]}[REPO]
     assert entry["rule_id"] == "R-PROV-001"
-    assert "scenario" not in entry
+    assert entry["scenario"] == "S-24"
 
 
 def test_count_form_lists_live_in_the_manifest(manifest):
