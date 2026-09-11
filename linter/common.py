@@ -51,6 +51,12 @@ def parse_blocks(text: str, config: dict | None = None) -> list[Block]:
     config = config or {}
     shell_langs = set(config.get("shell_langs") or
                       ["bash", "sh", "shell", "zsh", "console", "shell-session"])
+    # Расширение охвата по языку ограды — отдельным ключом, а не второй копией
+    # базового списка. Копия разошлась бы с оригиналом молча: `shell_langs`
+    # живёт в `shared` и читается девятью чекерами, и чекер, заведший свой
+    # полный список, перестал бы получать правки общего. Ключ ставит один
+    # чекер и только себе (run.load_checkers: собственный config побеждает).
+    shell_langs |= set(config.get("shell_langs_extra") or [])
     handoff_markers = config.get("handoff_markers") or ["Handoff for shell", "Handoff for git"]
     lookback = int(config.get("handoff_lookback", 3))
 

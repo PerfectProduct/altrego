@@ -510,13 +510,13 @@ def test_check_turn_red_draft_names_the_missing_slot():
 def test_check_turn_green_fixture_text_passes():
     verdict = mcp_server.check_turn(open(GREEN_TURN_END, encoding="utf-8").read())
     assert (verdict["passed"], verdict["findings"]) == (True, [])
-    assert len(verdict["checkers"]) == 16 and verdict["checkers_skipped"] == []
+    assert len(verdict["checkers"]) == 18 and verdict["checkers_skipped"] == []
 
 
 def test_check_turn_kind_spec_skips_handoff_only_checkers():
     verdict = mcp_server.check_turn(RED_DRAFT, kind="spec")
     assert "turn_end" in verdict["checkers_skipped"]
-    assert (len(verdict["checkers"]), len(verdict["checkers_skipped"])) == (6, 10)
+    assert (len(verdict["checkers"]), len(verdict["checkers_skipped"])) == (8, 10)
     assert verdict["kind"] == "spec"
 
 
