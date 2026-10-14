@@ -22,7 +22,12 @@ workspaces. Source documents remain authoritative in the vault.
 and alternating arm order before reading its requirements. `source-review.md`
 records the preliminary external-methods review and evaluator findings.
 
-Before measured execution, remaining prerequisites include the embedded-source
-license inventory, builder/evaluator access isolation, a separate technical
-smoke, and the complete immutable campaign manifest. No result may be inferred
-from preparation checks.
+`source-inventory-v1.json`, `runtime-lock.txt`, `oracle-collection-v1.json` and
+`evaluator-notes.md` record source review, the reviewed runtime, fixed oracle
+denominators and isolated evaluator checks. `intake-assessment-v1.json` records
+the passive assessment made before any builder outcome.
+
+CLI planning/resume isolation smoke has passed its filesystem and direct-local
+HTTP checks; proxy-aware local clients have a recorded limitation. The complete
+immutable campaign manifest and real Altrego owner gates remain prerequisites.
+No result may be inferred from preparation checks.

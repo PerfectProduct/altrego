@@ -23,8 +23,9 @@ upstream historical baseline cannot substitute for this campaign's control arm.
 
 Official source metadata was fetched from `microsoft/DKI_LLM`, pinned at
 `c090b7d57e3996c8900e86fecd16085b27e07f29`. The root MIT license was read.
-Embedded-task provenance and terms still need inspection; root MIT alone does
-not establish all nested rights. The source tree contains 30 task directories
+The completed subtree inventory is in `source-inventory-v1.json`; no nested
+licenses were found under RepoGenesis. Independent provenance of embedded
+requirement text remains unknown; root MIT alone does not resolve that question. The source tree contains 30 task directories
 and an evaluator specification of 22 Python and 8 Java tasks. This pilot samples
 only the Python stratum, as declared before requirement reading.
 

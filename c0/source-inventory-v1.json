@@ -1,0 +1,188 @@
+{
+  "revision": "c090b7d57e3996c8900e86fecd16085b27e07f29",
+  "root_license": "MIT; Microsoft Corporation",
+  "license_sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+  "basis": "Inspected repository license-path inventory and selected task files for nested license, copyright, author and original-repository notices. Do not infer rights for third-party software dependencies from this license. Keep source license with local extracted material; no redistribution in this C0 commit.",
+  "tasks": [
+    {
+      "task": "TaskManagement",
+      "files": [
+        {
+          "path": "RepoGenesis/repo/TaskManagement/README.md",
+          "sha256": "42265228d71b52623fa4df04fe4a7ffed2e15c4b181caa99d27f886b49d6e3fe"
+        },
+        {
+          "path": "RepoGenesis/repo/TaskManagement/tests/__init__.py",
+          "sha256": "e6761680431910a738a69487355cfdd1f4f1d1b88eb354b26cca3ab139911f1b"
+        },
+        {
+          "path": "RepoGenesis/repo/TaskManagement/tests/conftest.py",
+          "sha256": "4e434affa255d163aadb21eb397acc46e663a4d9f08a2aeb5ddb8692993033d2"
+        },
+        {
+          "path": "RepoGenesis/repo/TaskManagement/tests/requirements.txt",
+          "sha256": "151c8ca76091859cd98eee2b121b68a5d278c395dfc14a28d6fff72c65753a51"
+        },
+        {
+          "path": "RepoGenesis/repo/TaskManagement/tests/test_edge_cases.py",
+          "sha256": "bfbbb764c3e1f3de3d5f15e384be1851ad6a361f74ada4c240d3aef90da4cb0a"
+        },
+        {
+          "path": "RepoGenesis/repo/TaskManagement/tests/test_task_api.py",
+          "sha256": "17f97f79c42968af87c981e596f65c9106e47025118685f888f24903b86c2905"
+        }
+      ],
+      "nested_license_files": [],
+      "material": "Requirement document and evaluator tests/configuration; no reference service implementation in the published task directory.",
+      "attribution": "No distinct third-party repository URL or copyright/license notice found in these task files. Root Microsoft MIT is the published grant; independent provenance of generated/adapted task text is not established."
+    },
+    {
+      "task": "WebPan",
+      "files": [
+        {
+          "path": "RepoGenesis/repo/WebPan/README.md",
+          "sha256": "637a26edf39043a7385befd2009b179e8cfe5856004398d5a868a1e05ce76288"
+        },
+        {
+          "path": "RepoGenesis/repo/WebPan/tests/__init__.py",
+          "sha256": "ca3e65529e97787410322f4b5907fe62675509cb1ee3cb0d68770914c2516703"
+        },
+        {
+          "path": "RepoGenesis/repo/WebPan/tests/conftest.py",
+          "sha256": "0417560e095312b90e7aac2641f8d6e2528d0243a9a366af6a03d7ceeb8c18b1"
+        },
+        {
+          "path": "RepoGenesis/repo/WebPan/tests/pytest.ini",
+          "sha256": "06ab0cd2ba9311f3cb34f17078decfe159344445c786f98f470c37415564d3b0"
+        },
+        {
+          "path": "RepoGenesis/repo/WebPan/tests/requirements.txt",
+          "sha256": "08006ea48e571db884d6711bb14ea0da3f1397617b80561d36358b6f8bc8737f"
+        },
+        {
+          "path": "RepoGenesis/repo/WebPan/tests/run_tests.py",
+          "sha256": "d5b1e8278066a0283580e5add3c8fb6abffb9650a23d6ec857354eabd0e69e96"
+        },
+        {
+          "path": "RepoGenesis/repo/WebPan/tests/test_webpan_api.py",
+          "sha256": "4d376f1b544a378f11faeff98e841bff912b3b7b1bbe68517a507ec4c1788002"
+        }
+      ],
+      "nested_license_files": [],
+      "material": "Requirement document and evaluator tests/configuration; no reference service implementation in the published task directory.",
+      "attribution": "No distinct third-party repository URL or copyright/license notice found in these task files. Root Microsoft MIT is the published grant; independent provenance of generated/adapted task text is not established."
+    },
+    {
+      "task": "simple-rbac-service",
+      "files": [
+        {
+          "path": "RepoGenesis/repo/simple-rbac-service/.gitignore",
+          "sha256": "78b6cd178987057cb0506b943c42210afeb7a7ecb0d7d6aa8d45ad3125c47c30"
+        },
+        {
+          "path": "RepoGenesis/repo/simple-rbac-service/README.md",
+          "sha256": "cdfb3baffa7d3f382f9a27b681b2bc12be84c99b67682ff1b8ad30c0e4867ad0"
+        },
+        {
+          "path": "RepoGenesis/repo/simple-rbac-service/tests/README.md",
+          "sha256": "417b9471e2cb741e30f9c9d697bed50c2c086a6af30d0a916f1a1c54dd0f169e"
+        },
+        {
+          "path": "RepoGenesis/repo/simple-rbac-service/tests/requirements.txt",
+          "sha256": "fdf1b0d19db630d84b3a013a2f0b4b797828b624ba4fda504bf48b3650cdc60a"
+        },
+        {
+          "path": "RepoGenesis/repo/simple-rbac-service/tests/test_rbac_service.py",
+          "sha256": "3cddba2673e28c4b4f9ff6374a48286e4cda3d294965d3ededba16f8bc3087ab"
+        }
+      ],
+      "nested_license_files": [],
+      "material": "Requirement document and evaluator tests/configuration; no reference service implementation in the published task directory.",
+      "attribution": "No distinct third-party repository URL or copyright/license notice found in these task files. Root Microsoft MIT is the published grant; independent provenance of generated/adapted task text is not established."
+    },
+    {
+      "task": "Chatroom",
+      "files": [
+        {
+          "path": "RepoGenesis/repo/Chatroom/README.md",
+          "sha256": "b1dc2f218e671c961d5c76a6036b2ea87db6bf1c39f62a139c17400f5962f5a6"
+        },
+        {
+          "path": "RepoGenesis/repo/Chatroom/tests/__init__.py",
+          "sha256": "e2454ac45950d8d37ac9c163509a1f6a81f4ae436385df9c28377eab4bfac35d"
+        },
+        {
+          "path": "RepoGenesis/repo/Chatroom/tests/conftest.py",
+          "sha256": "d4ea94f1d78e08c43175e650b287d7abc752df8882e47672feba0f122c089e32"
+        },
+        {
+          "path": "RepoGenesis/repo/Chatroom/tests/pytest.ini",
+          "sha256": "6311333a4d3fa1a4c4ee9765f978a6fbf59ba53d882c58f3b2b03afcd0d7d1bf"
+        },
+        {
+          "path": "RepoGenesis/repo/Chatroom/tests/requirements.txt",
+          "sha256": "29fff1900a02dce4a56afea2cc4cb02a422b1dbd4937e5039e6242e1c103ea52"
+        },
+        {
+          "path": "RepoGenesis/repo/Chatroom/tests/test_chat_api.py",
+          "sha256": "b417c69ac53cb927503959c9b62be6879c31fcf713ff8207354ddc6f5955cb70"
+        },
+        {
+          "path": "RepoGenesis/repo/Chatroom/tests/test_edge_cases.py",
+          "sha256": "462d478d71a3c16f573cc23367c6e89943173cbded55b25205b445f07b116d49"
+        }
+      ],
+      "nested_license_files": [],
+      "material": "Requirement document and evaluator tests/configuration; no reference service implementation in the published task directory.",
+      "attribution": "No distinct third-party repository URL or copyright/license notice found in these task files. Root Microsoft MIT is the published grant; independent provenance of generated/adapted task text is not established."
+    },
+    {
+      "task": "Multilingual",
+      "files": [
+        {
+          "path": "RepoGenesis/repo/Multilingual/.gitignore",
+          "sha256": "dfca9c942fe70b96e904a5c410c1de6cdcad5ac7c3943cc886b20115e5aa8ddb"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/README.md",
+          "sha256": "03ca19955320f127ecbf2661faf76f25b1830f59c155f1e948829fcf884b5efd"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/requirements.txt",
+          "sha256": "50fae188f2d2d1cf9a813f53e7da956964533253381acd456c9d399e4a7bc086"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/tests/README.md",
+          "sha256": "e93733a8f9015434f805faf8e2f0787cae26d8db26c6c51354fb007ec614b2b4"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/tests/__init__.py",
+          "sha256": "240a86f6b23b7874d09c68bf52310c51e2b54ac408dd18c0ddad9f5dcaf8cf6f"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/tests/run_all_tests.py",
+          "sha256": "ffa434ac08810c9b0c3340ae43f39b65b8de2034c99ab3f2a828beb0ec5dd250"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/tests/test_languages.py",
+          "sha256": "cec99c1998c5612b0331ac6253fd0d8f6cf465da2c4e7daa2450e558c6b65678"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/tests/test_localize.py",
+          "sha256": "0cad32587b22141b66e339806da850c2cc0c78cdfcbf18ee0ce05243591ddc64"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/tests/test_timezone.py",
+          "sha256": "dc9f58377219868d3068727a330624fac58bfeb5e57c120b7f659cc6590d6f04"
+        },
+        {
+          "path": "RepoGenesis/repo/Multilingual/tests/test_translate.py",
+          "sha256": "96beeb9d21c8d59f1939942508f7d82fc9b25126c53fd267b62e114d8eb66ea1"
+        }
+      ],
+      "nested_license_files": [],
+      "material": "Requirement document and evaluator tests/configuration; no reference service implementation in the published task directory.",
+      "attribution": "No distinct third-party repository URL or copyright/license notice found in these task files. Root Microsoft MIT is the published grant; independent provenance of generated/adapted task text is not established."
+    }
+  ]
+}
