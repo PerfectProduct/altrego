@@ -1,0 +1,144 @@
+{
+  "policy_sha256": "4f61bb6e38074cf1c3b000c09cf67e239de3b4fd4baddcb3dc9df08b3ad1fe81",
+  "metadata_sha256": "6c01266b4cebbd0856cea035d426aa92ce0647681cfc316af1d1ed97c8eed6fd",
+  "population_count": 22,
+  "ranked_population": [
+    {
+      "id": "TaskManagement",
+      "rank_hash": "02ef44524492c60ca666886f910eea72386e8cd85337bd9e44b8282251fa6ef5"
+    },
+    {
+      "id": "WebPan",
+      "rank_hash": "0837a80b2455965be3175fd5e1d71256f4030bf44e4dc99733b62fd90082b364"
+    },
+    {
+      "id": "simple-rbac-service",
+      "rank_hash": "15083ae388430b0b0f84a908c6522da91221130e03acd608c7f3c691a16723cf"
+    },
+    {
+      "id": "Chatroom",
+      "rank_hash": "15a265e082a553201a1c1f7a981d8c10702e6cf0203ae5d0f49918c53d06ecb3"
+    },
+    {
+      "id": "Multilingual",
+      "rank_hash": "234bb5aab0f5d674923d5f806b2e871a07e5b854a5a900a84c476bdda205d2eb"
+    },
+    {
+      "id": "flask",
+      "rank_hash": "2f703196e85ed8b679e8adb011fdec1c936719ae2f1a5fab5caa2b43486632f4"
+    },
+    {
+      "id": "StructuredDataConvertor",
+      "rank_hash": "374d7469ad6c9e6ccd6cc5d816bbb31b809d6e03e49c23ea9975e0feca4c418c"
+    },
+    {
+      "id": "SimpleFastPyAPI",
+      "rank_hash": "3aba7b3b5bcfcd2c7af25cb336d06e55c1ba12d2dbb8198773f0a6e54feddb3b"
+    },
+    {
+      "id": "GameBackend",
+      "rank_hash": "4382e9612795749df01f705cbc645ffa90d2946f1854475e505b4cff611e0518"
+    },
+    {
+      "id": "Timer4Tasker",
+      "rank_hash": "6c47f9487c7319ebc55f0948fa97dd7010345f390fb8322c7d9a988c5dd160ed"
+    },
+    {
+      "id": "eve",
+      "rank_hash": "746d587feab7511569cbc38f34e4a31c107ea32a5d9b8e27a9501a72ee58e6bc"
+    },
+    {
+      "id": "mail_service",
+      "rank_hash": "8271928308061ce79c946ee26d39cefc50d31ab6d12842e53f37dd6d8dc1ed0c"
+    },
+    {
+      "id": "Customization",
+      "rank_hash": "8bfdb0b96150035e603c7f311f6927afb4d7d1984d6a4c28bcf080f85a3bcc95"
+    },
+    {
+      "id": "UserManagement",
+      "rank_hash": "967f83c0de2547bf6febe9bf6148ce8c7868c9888692fd975873dea2d4593898"
+    },
+    {
+      "id": "synapse",
+      "rank_hash": "9cc400e749254093327b24518dbd313454151ca14773e925ea5f37ca81196e3f"
+    },
+    {
+      "id": "Blog",
+      "rank_hash": "b307369f940b8f9dda06cf7bf1dfc61fde9dc1f6c88f4b079fbf388a11b91bfd"
+    },
+    {
+      "id": "rock-paper-scissors-flask",
+      "rank_hash": "b3ad2f3d7c84bf07f93223252efeb7eba7eaf8e327af98d8f3779190c52ce33d"
+    },
+    {
+      "id": "File_Relay",
+      "rank_hash": "b7804782a82b94bbec515bd388c817490187781fc3ecfc66b0cbc3a28b944ddb"
+    },
+    {
+      "id": "django-rest-framework-crud",
+      "rank_hash": "d13c0cea96a2a704b95ac9cfea390aee10768cdefb95810d77dc0f06ac7586f7"
+    },
+    {
+      "id": "Data_Rank_Searcher",
+      "rank_hash": "e20915e369dec86af83e40c033a05ea7d8abff7e6da9405760952d92a847402d"
+    },
+    {
+      "id": "Tic-Tac-Toe",
+      "rank_hash": "e49c66caeb4674b8f3d9e24cb914edaf715703362c22d6c35e0d017f110b6ff9"
+    },
+    {
+      "id": "UserManagement_2",
+      "rank_hash": "eef238e1ede5af623c6c3c582ca4b67a90cb6475b05eedfffbd964a5a8262492"
+    }
+  ],
+  "selected": [
+    "TaskManagement",
+    "WebPan",
+    "simple-rbac-service",
+    "Chatroom",
+    "Multilingual"
+  ],
+  "order": [
+    {
+      "task": "TaskManagement",
+      "arm": "control"
+    },
+    {
+      "task": "TaskManagement",
+      "arm": "altrego"
+    },
+    {
+      "task": "WebPan",
+      "arm": "altrego"
+    },
+    {
+      "task": "WebPan",
+      "arm": "control"
+    },
+    {
+      "task": "simple-rbac-service",
+      "arm": "control"
+    },
+    {
+      "task": "simple-rbac-service",
+      "arm": "altrego"
+    },
+    {
+      "task": "Chatroom",
+      "arm": "altrego"
+    },
+    {
+      "task": "Chatroom",
+      "arm": "control"
+    },
+    {
+      "task": "Multilingual",
+      "arm": "control"
+    },
+    {
+      "task": "Multilingual",
+      "arm": "altrego"
+    }
+  ]
+}
