@@ -1,6 +1,8 @@
 # C0: outcome-oracle experiment
 
-Work in progress. No measured builder attempt has started.
+Work in progress. The immutable manifest is sealed; measured execution has begun.
+`campaign-seal.json` identifies the exact manifest and append-only journal.
+Results are incomplete; no claim of C0 completion follows from the seal.
 
 The owner authorized one continuous C0 task, a local branch and local commits.
 The comparison is Codex CLI alone versus the same CLI with the full applicable
@@ -28,6 +30,6 @@ denominators and isolated evaluator checks. `intake-assessment-v1.json` records
 the passive assessment made before any builder outcome.
 
 CLI planning/resume isolation smoke has passed its filesystem and direct-local
-HTTP checks; proxy-aware local clients have a recorded limitation. The complete
-immutable campaign manifest and real Altrego owner gates remain prerequisites.
+HTTP checks; proxy-aware local clients have a recorded limitation. The manifest has now been sealed; actual Altrego owner gates remain required
+before the respective stages.
 No result may be inferred from preparation checks.
