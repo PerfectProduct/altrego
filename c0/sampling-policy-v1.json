@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "source": "https://github.com/microsoft/DKI_LLM",
+  "revision": "c090b7d57e3996c8900e86fecd16085b27e07f29",
+  "population": "Keys in RepoGenesis/eval_harness/constants.py REPO_SPECS with lang == python at the pinned revision, parsed as literal data without executing the module.",
+  "eligibility_rationale": "A deliberately Python-only pilot: local Python is available; Maven is absent and Docker daemon is unavailable. Results do not generalize to the Java stratum. No filtering on requirements, intake, complexity, or outcomes.",
+  "seed": "altrego-c0-owner-2026-10-15-v1",
+  "ranking": "Ascending hex SHA256 of UTF-8(seed + newline + exact case-sensitive task ID), breaking any ties by task ID.",
+  "selection": "First five ranked eligible tasks, no replacement. Unresolved license or infrastructure issues remain visible and must be resolved before execution or recorded as not run; never silently substitute another task.",
+  "order": "Selected tasks in ranking order. For zero-based task index even run control then altrego; odd run altrego then control. Each task/arm has exactly one main attempt.",
+  "smoke": "Separate synthetic service and synthetic oracle, not one of the selected requirements or solutions. Selected-task setup or evaluator probes must be labeled explicitly and cannot be invisible builder rehearsals.",
+  "intake_policy": "intake-policy-v1.json; SHA256 d247505f30ef02e34894f8c0651a7936f77f7c60811e8c267aad867721b9fe14"
+}

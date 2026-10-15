@@ -1,0 +1,12 @@
+{
+  "manifest": "reports/c0-campaign/manifest-v1.json",
+  "sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
+  "journal": "reports/c0-campaign/attempts.jsonl",
+  "frozen_before_first_measured_attempt": true,
+  "source_revision": "c090b7d57e3996c8900e86fecd16085b27e07f29",
+  "altrego_rules_commit": "006e445ea5199f9a4e86ee75df5571d8bf5167d2",
+  "harness_commit": "c784410ad5a712ef2254ea9efff17d5e4b5891be",
+  "task_pairs": 5,
+  "planned_attempts": 10,
+  "result_status": "in_progress"
+}

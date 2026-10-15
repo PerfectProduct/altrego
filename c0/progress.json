@@ -1,0 +1,335 @@
+{
+  "as_of": "2026-10-15T15:28:18.369100+00:00",
+  "status": "C0 experiment result accepted at pinned report commit; local acceptance recorded; owner external actions not performed; M1 not started",
+  "manifest_sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
+  "planned_pairs": 5,
+  "planned_attempts": 10,
+  "builds_sealed": 10,
+  "external_evaluations": 10,
+  "clean_pair_denominator": 5,
+  "clean_pair_denominator_status": "no observed oracle/reference/other-arm access or evaluator tampering in reviewed traces; finite common-controller judgment, training/public contamination not excluded",
+  "attempts": [
+    {
+      "attempt": "01-TaskManagement-control",
+      "task": "TaskManagement",
+      "arm": "control",
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 34,
+      "expected_tests": 44,
+      "active_cli_seconds": 118.933,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 81280,
+        "input_tokens": 107581,
+        "output_tokens": 6648,
+        "reasoning_output_tokens": 306
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/01-TaskManagement-control",
+      "all_tests_passed": false,
+      "failed_tests": 10,
+      "skipped_tests": 0
+    },
+    {
+      "attempt": "02-TaskManagement-altrego",
+      "task": "TaskManagement",
+      "arm": "altrego",
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 31,
+      "expected_tests": 44,
+      "active_cli_seconds": 1022.633,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 864128,
+        "input_tokens": 942655,
+        "output_tokens": 28824,
+        "reasoning_output_tokens": 3191
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/02-TaskManagement-altrego",
+      "all_tests_passed": false,
+      "failed_tests": 13,
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/TaskManagement-documentation-build-signed.json",
+      "unconfirmed_requirements": [
+        "Docker build, container execution and container persistence"
+      ],
+      "skipped_tests": 0
+    },
+    {
+      "attempt": "03-WebPan-altrego",
+      "task": "WebPan",
+      "arm": "altrego",
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 0,
+      "expected_tests": 22,
+      "active_cli_seconds": 1479.241,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 1607936,
+        "input_tokens": 1694182,
+        "output_tokens": 45633,
+        "reasoning_output_tokens": 5653
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/03-WebPan-altrego",
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/WebPan-documentation-build-signed.json",
+      "all_tests_passed": false,
+      "failed_tests": 0,
+      "skipped_tests": 22,
+      "known_unimplemented": [
+        "comprehensive malware-content scanning",
+        "full audit-pair crash reconstruction"
+      ],
+      "unmeasured": [
+        "long-term 99.9% availability",
+        "power-loss durability",
+        "exhaustive fault coverage"
+      ]
+    },
+    {
+      "attempt": "04-WebPan-control",
+      "task": "WebPan",
+      "arm": "control",
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 0,
+      "expected_tests": 22,
+      "active_cli_seconds": 319.494,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 195712,
+        "input_tokens": 231532,
+        "output_tokens": 11072,
+        "reasoning_output_tokens": 963
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/04-WebPan-control",
+      "all_tests_passed": false,
+      "failed_tests": 0,
+      "skipped_tests": 22
+    },
+    {
+      "attempt": "05-simple-rbac-service-control",
+      "task": "simple-rbac-service",
+      "arm": "control",
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 8,
+      "expected_tests": 9,
+      "active_cli_seconds": 86.62,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 60544,
+        "input_tokens": 72329,
+        "output_tokens": 3292,
+        "reasoning_output_tokens": 47
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/05-simple-rbac-service-control",
+      "failed_tests": 1,
+      "skipped_tests": 0,
+      "all_tests_passed": false
+    },
+    {
+      "attempt": "06-simple-rbac-service-altrego",
+      "task": "simple-rbac-service",
+      "arm": "altrego",
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 8,
+      "expected_tests": 9,
+      "active_cli_seconds": 464.932,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 208128,
+        "input_tokens": 258507,
+        "output_tokens": 13089,
+        "reasoning_output_tokens": 271
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/06-simple-rbac-service-altrego",
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/RBAC-documentation-build-signed.json",
+      "failed_tests": 1,
+      "skipped_tests": 0,
+      "all_tests_passed": false
+    },
+    {
+      "attempt": "07-Chatroom-altrego",
+      "task": "Chatroom",
+      "arm": "altrego",
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 9,
+      "expected_tests": 9,
+      "active_cli_seconds": 785.382,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 451712,
+        "input_tokens": 504506,
+        "output_tokens": 20177,
+        "reasoning_output_tokens": 1648
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/07-Chatroom-altrego",
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/Chatroom-documentation-build-signed.json",
+      "build_initial_remaining_seconds": 1528.887,
+      "build_stage_limit_remaining": 7,
+      "unexecuted_documented_runtime_checks": [
+        "missing-interpreter startup failure",
+        "import-failure startup failure"
+      ],
+      "owner_required_review_corrections": "both executed with targeted defect witnesses",
+      "unmeasured": [
+        "sustained load",
+        "complete concurrency interleavings",
+        "unexpected 500 diagnostic privacy behavior",
+        "host OS clock modification",
+        "production deployment",
+        "dynamic egress monitoring"
+      ],
+      "failed_tests": 0,
+      "skipped_tests": 0,
+      "all_tests_passed": true
+    },
+    {
+      "attempt": "08-Chatroom-control",
+      "task": "Chatroom",
+      "arm": "control",
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 9,
+      "expected_tests": 9,
+      "active_cli_seconds": 200.366,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 118400,
+        "input_tokens": 131675,
+        "output_tokens": 5825,
+        "reasoning_output_tokens": 308
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/08-Chatroom-control",
+      "failed_tests": 0,
+      "skipped_tests": 0,
+      "all_tests_passed": true
+    },
+    {
+      "attempt": "09-Multilingual-control",
+      "task": "Multilingual",
+      "arm": "control",
+      "build_status": "artifact_sealed_partial_requirements",
+      "external_evaluation": "evaluated",
+      "passed_tests": 32,
+      "expected_tests": 33,
+      "active_cli_seconds": 270.671,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 132608,
+        "input_tokens": 152492,
+        "output_tokens": 8091,
+        "reasoning_output_tokens": 430
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/09-Multilingual-control",
+      "known_unimplemented": [
+        "unrestricted translation; finite offline phrase library only"
+      ],
+      "failed_tests": 1,
+      "skipped_tests": 0,
+      "all_tests_passed": false
+    },
+    {
+      "attempt": "10-Multilingual-altrego",
+      "task": "Multilingual",
+      "arm": "altrego",
+      "build_status": "artifact_sealed_partial_requirements",
+      "external_evaluation": "evaluated",
+      "passed_tests": 25,
+      "expected_tests": 33,
+      "active_cli_seconds": 939.541,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 547712,
+        "input_tokens": 620337,
+        "output_tokens": 24939,
+        "reasoning_output_tokens": 4125
+      },
+      "owner_active_minutes": null,
+      "evidence": "reports/c0-campaign/10-Multilingual-altrego",
+      "known_unimplemented": [
+        "general translation/translation library capability",
+        "meaningful language catalog coverage",
+        "real language/pair validation"
+      ],
+      "failed_tests": 8,
+      "skipped_tests": 0,
+      "all_tests_passed": false,
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/Multilingual-documentation-build-signed.json",
+      "blocked_translation_checks": [
+        "en->zh-cn",
+        "es->en sentences",
+        "zh-cn->es sentences",
+        "held-out sentence quality",
+        "punctuation/non-ASCII quality",
+        "empty after real support validation",
+        "same-language after real support validation",
+        "real catalog/pair support",
+        "identity-translation defect witness"
+      ],
+      "unmeasured": [
+        "translation quality/performance",
+        "throughput/memory",
+        "exhaustive inputs/timezones/locales",
+        "import-time and universal no-egress proof"
+      ],
+      "build_initial_remaining_seconds": 1555.808,
+      "build_initial_remaining_stages": 7,
+      "unused_active_budget_seconds": 860.459,
+      "remaining_stages_not_used_after_finish": 6
+    }
+  ],
+  "passive_intake": {
+    "accepted": 4,
+    "total": 5,
+    "assessment": "c0/intake-assessment-v1.json"
+  },
+  "next_action": "No further experiment or M1 execution. Owner controls push, merge, publication and application of vault proposals.",
+  "owner_request": null,
+  "missing": [
+    "owner push/merge/publication if chosen",
+    "owner application/read-back of prepared vault state changes"
+  ],
+  "additional_money_spent": 0,
+  "subscription_quota_consumption": "not measured",
+  "brief_signatures": {
+    "status": "all five unchanged briefs accepted",
+    "receipt": "reports/c0-campaign/owner-decisions/five-original-briefs-signed.json",
+    "active_minutes": null,
+    "measurement_status": "not measured, owner self-report"
+  },
+  "completed_pair_evidence": [
+    "reports/c0-campaign/TaskManagement-pair/Pair-report.md",
+    "reports/c0-campaign/WebPan-pair/Pair-report.md",
+    "reports/c0-campaign/simple-rbac-service-pair/Pair-report.md",
+    "reports/c0-campaign/Chatroom-pair/Pair-report.md",
+    "reports/c0-campaign/Multilingual-pair/Pair-report.md"
+  ],
+  "owner_result_acceptance": {
+    "status": "accepted",
+    "receipt": "c0/acceptance.json",
+    "accepted_commit": "967b59e6dfe7402c6393aa57af12fbc587349904",
+    "accepted_report_sha256": "44a9bf572630757bbb11590189f5798df33085107342381fc485a1d63fcc194f",
+    "scope": "experiment only, with limitations/unmet/unmeasured retained"
+  },
+  "external_actions": {
+    "push": "not performed; remains with owner",
+    "merge": "not performed; remains with owner",
+    "publication": "not performed; remains with owner",
+    "vault_proposals_application": "not performed; remains with owner"
+  },
+  "M1_started": false,
+  "goal_registry_status_at_experiment_delivery": "blocked remains in tool; user explicitly resumed work; tool has no resume operation"
+}

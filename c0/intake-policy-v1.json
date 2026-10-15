@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "frozen-before-reading-selected-requirements",
+  "purpose": "Passive input assessment for the C0 experiment; not an Altrego canon change or interactive requirements improvement.",
+  "unit": "One unmodified upstream requirement document; same assessment applies to both arms.",
+  "rubric": [
+    {"id": "I1", "criterion": "Names the intended service purpose and its user or caller."},
+    {"id": "I2", "criterion": "Describes at least one observable end-to-end operation, with its input and expected output or state transition."},
+    {"id": "I3", "criterion": "Specifies the public interface sufficiently to implement calls: paths or entry points, methods, and required input fields where relevant."},
+    {"id": "I4", "criterion": "States persistence and identity/authentication expectations where operations require them, or explicitly makes them unnecessary."},
+    {"id": "I5", "criterion": "Provides observable success criteria beyond merely naming the technology stack."},
+    {"id": "I6", "criterion": "Contains no unresolved internal contradiction that prevents implementing the described observable behavior."}
+  ],
+  "rating": "Each criterion is yes, no, or unknown with a document location and short rationale. No inference from evaluation tests, reference implementation, or eventual outcome.",
+  "acceptance": "Accepted iff every criterion is yes. Unknown does not count as yes. Report criterion-level ratings as well as binary acceptance.",
+  "timing": "Assess each selected document once before its first builder attempt; seal assessment before outcome evaluation. Do not change or enrich the brief, exclude a task, or alter the sampling order because of intake rating.",
+  "denominator": "All five selected briefs, including rejected or unknown briefs and tasks whose attempts fail infrastructurally.",
+  "outcome_link": "Report each paired task outcome beside the frozen intake rating and descriptive accepted/rejected-group counts. Five tasks cannot establish predictive validity."
+}

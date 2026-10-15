@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "at": "2026-10-14T22:06:25.233357+00:00",
+  "policy_sha256": "d247505f30ef02e34894f8c0651a7936f77f7c60811e8c267aad867721b9fe14",
+  "source_revision": "c090b7d57e3996c8900e86fecd16085b27e07f29",
+  "method": "Managing-context passive reading of unmodified requirement documents before any builder attempt or outcome. No criterion derived from tests. Metadata license search subsequently exposed some test lines; no test execution or result existed.",
+  "assessments": [
+    {
+      "task": "TaskManagement",
+      "requirement_sha256": "42265228d71b52623fa4df04fe4a7ffed2e15c4b181caa99d27f886b49d6e3fe",
+      "accepted": true,
+      "criteria": [
+        {
+          "id": "I1",
+          "rating": "yes",
+          "location": "Functionality Description",
+          "rationale": "Task service for users."
+        },
+        {
+          "id": "I2",
+          "rating": "yes",
+          "location": "API Interfaces 1–5",
+          "rationale": "Create/read/update/delete state and schemas."
+        },
+        {
+          "id": "I3",
+          "rating": "yes",
+          "location": "Service Configuration; API Interfaces",
+          "rationale": "Port, paths, methods, input fields."
+        },
+        {
+          "id": "I4",
+          "rating": "yes",
+          "location": "Data Model; Technical Specifications",
+          "rationale": "Relational task storage; no per-user ownership or authentication operation is requested."
+        },
+        {
+          "id": "I5",
+          "rating": "yes",
+          "location": "API Interfaces; Error Response Format",
+          "rationale": "Observable responses, validation and errors."
+        },
+        {
+          "id": "I6",
+          "rating": "yes",
+          "location": "Whole document",
+          "rationale": "No implementation-blocking contradiction identified."
+        }
+      ]
+    },
+    {
+      "task": "WebPan",
+      "requirement_sha256": "637a26edf39043a7385befd2009b179e8cfe5856004398d5a868a1e05ce76288",
+      "accepted": true,
+      "criteria": [
+        {
+          "id": "I1",
+          "rating": "yes",
+          "location": "Functionality Description",
+          "rationale": "File storage and sharing for authenticated users."
+        },
+        {
+          "id": "I2",
+          "rating": "yes",
+          "location": "API Interfaces 1–6",
+          "rationale": "Upload, download and sharing have inputs and observable outputs."
+        },
+        {
+          "id": "I3",
+          "rating": "yes",
+          "location": "Service Configuration; API Interfaces",
+          "rationale": "Bearer authentication, paths, methods and schemas."
+        },
+        {
+          "id": "I4",
+          "rating": "yes",
+          "location": "Core Features; User Authentication; File Management",
+          "rationale": "Stored files, ownership and token access are described; storage backend is left open."
+        },
+        {
+          "id": "I5",
+          "rating": "yes",
+          "location": "API Interfaces; Technical Specifications",
+          "rationale": "Response contracts, size limits and permissions are observable."
+        },
+        {
+          "id": "I6",
+          "rating": "yes",
+          "location": "Storage Management APIs; File Limitations",
+          "rationale": "Quota example is 10 MiB whereas stated default is 10 GB; treated as illustrative response versus normative default, not an unavoidable contradiction. Record ambiguity without enriching builder brief."
+        }
+      ]
+    },
+    {
+      "task": "simple-rbac-service",
+      "requirement_sha256": "cdfb3baffa7d3f382f9a27b681b2bc12be84c99b67682ff1b8ad30c0e4867ad0",
+      "accepted": true,
+      "criteria": [
+        {
+          "id": "I1",
+          "rating": "yes",
+          "location": "Project Overview",
+          "rationale": "API for callers managing user roles and permissions."
+        },
+        {
+          "id": "I2",
+          "rating": "yes",
+          "location": "API Specification 1–4",
+          "rationale": "Role assignment and resulting permission union."
+        },
+        {
+          "id": "I3",
+          "rating": "yes",
+          "location": "API Specification",
+          "rationale": "Port, endpoints, methods and schemas provided."
+        },
+        {
+          "id": "I4",
+          "rating": "yes",
+          "location": "Data Model; Implementation Notes",
+          "rationale": "User IDs are strings and storage is explicitly in memory; no login operation is required."
+        },
+        {
+          "id": "I5",
+          "rating": "yes",
+          "location": "API Specification; Implementation Notes",
+          "rationale": "Response contracts, errors and union semantics."
+        },
+        {
+          "id": "I6",
+          "rating": "yes",
+          "location": "Whole document",
+          "rationale": "No implementation-blocking contradiction identified."
+        }
+      ]
+    },
+    {
+      "task": "Chatroom",
+      "requirement_sha256": "b1dc2f218e671c961d5c76a6036b2ea87db6bf1c39f62a139c17400f5962f5a6",
+      "accepted": false,
+      "criteria": [
+        {
+          "id": "I1",
+          "rating": "yes",
+          "location": "Functionality Description",
+          "rationale": "Chat service for users and rooms."
+        },
+        {
+          "id": "I2",
+          "rating": "yes",
+          "location": "Join Room; Send Message; Pull Messages",
+          "rationale": "Join/send/read flow with access rules."
+        },
+        {
+          "id": "I3",
+          "rating": "yes",
+          "location": "API Definition",
+          "rationale": "Port, endpoints, methods, types and validation boundaries."
+        },
+        {
+          "id": "I4",
+          "rating": "unknown",
+          "location": "API Definition; whole document",
+          "rationale": "Identity and tokens are specified, but persistence expectations for accounts, rooms and messages are not stated."
+        },
+        {
+          "id": "I5",
+          "rating": "yes",
+          "location": "API Definition; Error Codes and Conventions",
+          "rationale": "Observable schemas and errors."
+        },
+        {
+          "id": "I6",
+          "rating": "yes",
+          "location": "Whole document",
+          "rationale": "No implementation-blocking contradiction identified."
+        }
+      ]
+    },
+    {
+      "task": "Multilingual",
+      "requirement_sha256": "03ca19955320f127ecbf2661faf76f25b1830f59c155f1e948829fcf884b5efd",
+      "accepted": true,
+      "criteria": [
+        {
+          "id": "I1",
+          "rating": "yes",
+          "location": "Project Overview",
+          "rationale": "Internationalization service for REST callers."
+        },
+        {
+          "id": "I2",
+          "rating": "yes",
+          "location": "API Endpoints 1–4",
+          "rationale": "Translation and datetime conversions with inputs/outputs."
+        },
+        {
+          "id": "I3",
+          "rating": "yes",
+          "location": "API Endpoints",
+          "rationale": "Paths, methods, port and required fields."
+        },
+        {
+          "id": "I4",
+          "rating": "yes",
+          "location": "API Endpoints",
+          "rationale": "Operations transform supplied inputs and require neither persistent user state nor caller identity."
+        },
+        {
+          "id": "I5",
+          "rating": "yes",
+          "location": "API Endpoints; Error Handling",
+          "rationale": "Observable conversion outputs and error contract."
+        },
+        {
+          "id": "I6",
+          "rating": "yes",
+          "location": "API Endpoints; Notes",
+          "rationale": "Examples extend two-letter language codes with region tags; feasible to support both, no blocking contradiction identified."
+        }
+      ]
+    }
+  ]
+}
