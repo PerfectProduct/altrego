@@ -1,8 +1,17 @@
 # C0: outcome-oracle experiment
 
-Work in progress. The immutable manifest is sealed; measured execution has begun.
-`campaign-seal.json` identifies the exact manifest and append-only journal.
-Results are incomplete; no claim of C0 completion follows from the seal.
+All five pairs and ten first external evaluations are recorded. The experiment
+report is ready for owner review; final acceptance, push/merge and applied vault
+closure remain pending. `campaign-seal.json` identifies the unchanged manifest
+and append-only journal. No completion claim follows from the seal alone.
+
+Read [RESULTS.md](RESULTS.md) for the paired results, costs, owner workload,
+K1–K7, passive intake and limits. [M1-kickoff.md](M1-kickoff.md) is a prepared,
+conditional opener; [LESSONS.md](LESSONS.md) is the prepared 10c inventory.
+Neither starts M1 or changes the canon. Detailed local evidence and proposed
+state changes remain under `reports/c0-campaign/`; the private delivery archive,
+reproduction note and actual branch/HEAD/commit state are under
+`reports/c0-delivery/`.
 
 The owner authorized one continuous C0 task, a local branch and local commits.
 The comparison is Codex CLI alone versus the same CLI with the full applicable
@@ -29,7 +38,8 @@ records the preliminary external-methods review and evaluator findings.
 denominators and isolated evaluator checks. `intake-assessment-v1.json` records
 the passive assessment made before any builder outcome.
 
-CLI planning/resume isolation smoke has passed its filesystem and direct-local
-HTTP checks; proxy-aware local clients have a recorded limitation. The manifest has now been sealed; actual Altrego owner gates remain required
-before the respective stages.
+CLI planning/resume isolation smoke passed its filesystem and direct-local
+HTTP checks; proxy-aware local clients have a recorded limitation. The manifest
+remains sealed; all five actual Altrego brief/documentation/Build gates are now
+recorded, with the final owner permitting an explicitly partial attempt.
 No result may be inferred from preparation checks.

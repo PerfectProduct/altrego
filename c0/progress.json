@@ -1,13 +1,13 @@
 {
-  "as_of": "2026-10-15T14:03:00.332341+00:00",
-  "status": "incomplete; four pairs evaluated; Multilingual control sealed; Altrego documentation/review and partial-result-aware Build owner gate pending",
+  "as_of": "2026-10-15T14:43:41.785479+00:00",
+  "status": "all ten attempts sealed/evaluated; final report and proposed closure prepared; owner acceptance/push/merge pending",
   "manifest_sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
   "planned_pairs": 5,
   "planned_attempts": 10,
-  "builds_sealed": 9,
-  "external_evaluations": 8,
-  "clean_pair_denominator": null,
-  "clean_pair_denominator_status": "not final; four reviewed pairs show no observed contamination, one pair pending",
+  "builds_sealed": 10,
+  "external_evaluations": 10,
+  "clean_pair_denominator": 5,
+  "clean_pair_denominator_status": "no observed oracle/reference/other-arm access or evaluator tampering in reviewed traces; finite common-controller judgment, training/public contamination not excluded",
   "attempts": [
     {
       "attempt": "01-TaskManagement-control",
@@ -28,7 +28,8 @@
       "owner_active_minutes": null,
       "evidence": "reports/c0-campaign/01-TaskManagement-control",
       "all_tests_passed": false,
-      "failed_tests": 10
+      "failed_tests": 10,
+      "skipped_tests": 0
     },
     {
       "attempt": "02-TaskManagement-altrego",
@@ -53,7 +54,8 @@
       "owner_documentation_signature": "reports/c0-campaign/owner-decisions/TaskManagement-documentation-build-signed.json",
       "unconfirmed_requirements": [
         "Docker build, container execution and container persistence"
-      ]
+      ],
+      "skipped_tests": 0
     },
     {
       "attempt": "03-WebPan-altrego",
@@ -219,8 +221,8 @@
       "task": "Multilingual",
       "arm": "control",
       "build_status": "artifact_sealed_partial_requirements",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "external_evaluation": "evaluated",
+      "passed_tests": 32,
       "expected_tests": 33,
       "active_cli_seconds": 270.671,
       "token_totals": {
@@ -234,31 +236,59 @@
       "evidence": "reports/c0-campaign/09-Multilingual-control",
       "known_unimplemented": [
         "unrestricted translation; finite offline phrase library only"
-      ]
+      ],
+      "failed_tests": 1,
+      "skipped_tests": 0,
+      "all_tests_passed": false
     },
     {
       "attempt": "10-Multilingual-altrego",
       "task": "Multilingual",
       "arm": "altrego",
-      "build_status": "plan_reviewed_with_frozen_conditions_and_unmet_translation_waiting_for_owner_documentation_signature_and_build",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "build_status": "artifact_sealed_partial_requirements",
+      "external_evaluation": "evaluated",
+      "passed_tests": 25,
       "expected_tests": 33,
-      "active_cli_seconds": 244.192,
+      "active_cli_seconds": 939.541,
       "token_totals": {
-        "input_tokens": 41670,
-        "cached_input_tokens": 19840,
         "cache_write_input_tokens": 0,
-        "output_tokens": 6404,
-        "reasoning_output_tokens": 64
+        "cached_input_tokens": 547712,
+        "input_tokens": 620337,
+        "output_tokens": 24939,
+        "reasoning_output_tokens": 4125
       },
       "owner_active_minutes": null,
       "evidence": "reports/c0-campaign/10-Multilingual-altrego",
       "known_unimplemented": [
-        "general offline translation capability unresolved; planning only"
+        "general translation/translation library capability",
+        "meaningful language catalog coverage",
+        "real language/pair validation"
       ],
-      "remaining_build_seconds": 1555.808,
-      "remaining_cli_stages": 7
+      "failed_tests": 8,
+      "skipped_tests": 0,
+      "all_tests_passed": false,
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/Multilingual-documentation-build-signed.json",
+      "blocked_translation_checks": [
+        "en->zh-cn",
+        "es->en sentences",
+        "zh-cn->es sentences",
+        "held-out sentence quality",
+        "punctuation/non-ASCII quality",
+        "empty after real support validation",
+        "same-language after real support validation",
+        "real catalog/pair support",
+        "identity-translation defect witness"
+      ],
+      "unmeasured": [
+        "translation quality/performance",
+        "throughput/memory",
+        "exhaustive inputs/timezones/locales",
+        "import-time and universal no-egress proof"
+      ],
+      "build_initial_remaining_seconds": 1555.808,
+      "build_initial_remaining_stages": 7,
+      "unused_active_budget_seconds": 860.459,
+      "remaining_stages_not_used_after_finish": 6
     }
   ],
   "passive_intake": {
@@ -266,15 +296,12 @@
     "total": 5,
     "assessment": "c0/intake-assessment-v1.json"
   },
-  "next_action": "Obtain actual owner acceptance of Multilingual documentation/review, acknowledging unrestricted translation remains unmet under frozen conditions, and explicit Build authorization. Resume SAME context 01a13fd8-bfd2-7f50-8580-815b3862bd23 with 1555.808 seconds/seven stages. No new resources, changed requirements, retries or oracle feedback.",
-  "owner_request": "reports/c0-campaign/10-Multilingual-altrego/owner-review/Review-packet.md",
+  "next_action": "Owner review of final report and prepared closure; no more measured runs, no M1 execution.",
+  "owner_request": null,
   "missing": [
-    "one main attempt artifact/status",
-    "two external evaluations",
-    "complete five-pair report and paired K1–K7/contamination review",
-    "owner active minutes unavailable where explicitly not measured; future gates pending",
-    "final M1 implications, filled K and 10c closure",
-    "owner acceptance"
+    "owner final acceptance",
+    "owner push/merge/publication if chosen",
+    "owner application/read-back of prepared vault state changes"
   ],
   "additional_money_spent": 0,
   "subscription_quota_consumption": "not measured",
@@ -289,6 +316,7 @@
     "reports/c0-campaign/TaskManagement-pair/Pair-report.md",
     "reports/c0-campaign/WebPan-pair/Pair-report.md",
     "reports/c0-campaign/simple-rbac-service-pair/Pair-report.md",
-    "reports/c0-campaign/Chatroom-pair/Pair-report.md"
+    "reports/c0-campaign/Chatroom-pair/Pair-report.md",
+    "reports/c0-campaign/Multilingual-pair/Pair-report.md"
   ]
 }
