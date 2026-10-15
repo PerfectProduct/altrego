@@ -1,13 +1,13 @@
 {
-  "as_of": "2026-10-15T10:30:39.023744+00:00",
-  "status": "incomplete; TaskManagement pair evaluated; WebPan documentation signature and Build gate pending",
+  "as_of": "2026-10-15T11:09:08.100580+00:00",
+  "status": "incomplete; two pairs evaluated, RBAC control sealed; RBAC Altrego documentation/Build owner gate pending",
   "manifest_sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
   "planned_pairs": 5,
   "planned_attempts": 10,
-  "builds_sealed": 2,
-  "external_evaluations": 2,
+  "builds_sealed": 5,
+  "external_evaluations": 4,
   "clean_pair_denominator": null,
-  "clean_pair_denominator_status": "not yet final; first pair has no observed contamination in reviewed traces, four pairs pending",
+  "clean_pair_denominator_status": "not final; first two pairs show no observed contamination in reviewed traces, three pairs pending",
   "attempts": [
     {
       "attempt": "01-TaskManagement-control",
@@ -59,59 +59,93 @@
       "attempt": "03-WebPan-altrego",
       "task": "WebPan",
       "arm": "altrego",
-      "build_status": "plan_reviewed_waiting_for_documentation_signature_and_build",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 0,
       "expected_tests": 22,
-      "active_cli_seconds": 584.15,
+      "active_cli_seconds": 1479.241,
       "token_totals": {
         "cache_write_input_tokens": 0,
-        "cached_input_tokens": 57216,
-        "input_tokens": 83566,
-        "output_tokens": 17310,
-        "reasoning_output_tokens": 127
+        "cached_input_tokens": 1607936,
+        "input_tokens": 1694182,
+        "output_tokens": 45633,
+        "reasoning_output_tokens": 5653
       },
       "owner_active_minutes": null,
-      "evidence": "reports/c0-campaign/03-WebPan-altrego"
+      "evidence": "reports/c0-campaign/03-WebPan-altrego",
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/WebPan-documentation-build-signed.json",
+      "all_tests_passed": false,
+      "failed_tests": 0,
+      "skipped_tests": 22,
+      "known_unimplemented": [
+        "comprehensive malware-content scanning",
+        "full audit-pair crash reconstruction"
+      ],
+      "unmeasured": [
+        "long-term 99.9% availability",
+        "power-loss durability",
+        "exhaustive fault coverage"
+      ]
     },
     {
       "attempt": "04-WebPan-control",
       "task": "WebPan",
       "arm": "control",
-      "build_status": "planned",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 0,
       "expected_tests": 22,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 319.494,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 195712,
+        "input_tokens": 231532,
+        "output_tokens": 11072,
+        "reasoning_output_tokens": 963
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/04-WebPan-control",
+      "all_tests_passed": false,
+      "failed_tests": 0,
+      "skipped_tests": 22
     },
     {
       "attempt": "05-simple-rbac-service-control",
       "task": "simple-rbac-service",
       "arm": "control",
-      "build_status": "planned",
+      "build_status": "artifact_sealed",
       "external_evaluation": "not_run",
       "passed_tests": null,
       "expected_tests": 9,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 86.62,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 60544,
+        "input_tokens": 72329,
+        "output_tokens": 3292,
+        "reasoning_output_tokens": 47
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/05-simple-rbac-service-control"
     },
     {
       "attempt": "06-simple-rbac-service-altrego",
       "task": "simple-rbac-service",
       "arm": "altrego",
-      "build_status": "planned",
+      "build_status": "plan_reviewed_waiting_for_documentation_signature_and_build",
       "external_evaluation": "not_run",
       "passed_tests": null,
       "expected_tests": 9,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 198.091,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 24448,
+        "input_tokens": 40470,
+        "output_tokens": 5321,
+        "reasoning_output_tokens": 79
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/06-simple-rbac-service-altrego"
     },
     {
       "attempt": "07-Chatroom-altrego",
@@ -171,13 +205,12 @@
     "total": 5,
     "assessment": "c0/intake-assessment-v1.json"
   },
-  "next_action": "Obtain actual owner acceptance of revised WebPan documentation and explicit Build authorization, then resume same context with 1215.850 seconds and at most six stages; preserve frozen order and no oracle feedback.",
-  "owner_request": "reports/c0-campaign/03-WebPan-altrego/owner-review-v2/Review-packet.md",
+  "next_action": "Obtain actual documentation signature and Build authorization for 06-simple-rbac-service-altrego; resume same context with 1601.909 seconds and at most seven stages. No retries or oracle feedback.",
+  "owner_request": "reports/c0-campaign/06-simple-rbac-service-altrego/owner-review/Review-packet.md",
   "missing": [
-    "eight main attempt artifacts/statuses",
-    "eight external evaluations",
-    "complete five-pair outcome and cost comparison",
-    "full paired K1–K7 and contamination review",
+    "five main attempt artifacts/statuses",
+    "six external evaluations",
+    "complete five-pair report and paired K1–K7/contamination review",
     "owner active minutes unavailable where explicitly not measured; future gates pending",
     "final M1 implications, filled K and 10c closure",
     "owner acceptance"
@@ -191,5 +224,8 @@
     "measurement_status": "not measured, owner self-report"
   },
   "goal_registry_status": "blocked remains in tool; user explicitly resumed work; tool has no resume operation",
-  "completed_pair_evidence": "reports/c0-campaign/TaskManagement-pair/Pair-report.md"
+  "completed_pair_evidence": [
+    "reports/c0-campaign/TaskManagement-pair/Pair-report.md",
+    "reports/c0-campaign/WebPan-pair/Pair-report.md"
+  ]
 }
