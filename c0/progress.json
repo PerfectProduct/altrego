@@ -1,21 +1,21 @@
 {
-  "as_of": "2026-10-15T07:05:41.511621+00:00",
-  "status": "incomplete; TaskManagement Altrego documentation and execution owner gates pending",
+  "as_of": "2026-10-15T10:30:39.023744+00:00",
+  "status": "incomplete; TaskManagement pair evaluated; WebPan documentation signature and Build gate pending",
   "manifest_sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
   "planned_pairs": 5,
   "planned_attempts": 10,
-  "builds_sealed": 1,
-  "external_evaluations": 0,
+  "builds_sealed": 2,
+  "external_evaluations": 2,
   "clean_pair_denominator": null,
-  "clean_pair_denominator_status": "not yet determined; neither arm of any pair has external evaluation",
+  "clean_pair_denominator_status": "not yet final; first pair has no observed contamination in reviewed traces, four pairs pending",
   "attempts": [
     {
       "attempt": "01-TaskManagement-control",
       "task": "TaskManagement",
       "arm": "control",
       "build_status": "artifact_sealed",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "external_evaluation": "evaluated",
+      "passed_tests": 34,
       "expected_tests": 44,
       "active_cli_seconds": 118.933,
       "token_totals": {
@@ -26,39 +26,53 @@
         "reasoning_output_tokens": 306
       },
       "owner_active_minutes": null,
-      "evidence": "reports/c0-campaign/01-TaskManagement-control"
+      "evidence": "reports/c0-campaign/01-TaskManagement-control",
+      "all_tests_passed": false,
+      "failed_tests": 10
     },
     {
       "attempt": "02-TaskManagement-altrego",
       "task": "TaskManagement",
       "arm": "altrego",
-      "build_status": "plan_reviewed_waiting_for_documentation_signature_and_build",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 31,
       "expected_tests": 44,
-      "active_cli_seconds": 421.999,
+      "active_cli_seconds": 1022.633,
       "token_totals": {
         "cache_write_input_tokens": 0,
-        "cached_input_tokens": 38528,
-        "input_tokens": 55429,
-        "output_tokens": 10044,
-        "reasoning_output_tokens": 681
+        "cached_input_tokens": 864128,
+        "input_tokens": 942655,
+        "output_tokens": 28824,
+        "reasoning_output_tokens": 3191
       },
       "owner_active_minutes": null,
-      "evidence": "reports/c0-campaign/02-TaskManagement-altrego"
+      "evidence": "reports/c0-campaign/02-TaskManagement-altrego",
+      "all_tests_passed": false,
+      "failed_tests": 13,
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/TaskManagement-documentation-build-signed.json",
+      "unconfirmed_requirements": [
+        "Docker build, container execution and container persistence"
+      ]
     },
     {
       "attempt": "03-WebPan-altrego",
       "task": "WebPan",
       "arm": "altrego",
-      "build_status": "planned",
+      "build_status": "plan_reviewed_waiting_for_documentation_signature_and_build",
       "external_evaluation": "not_run",
       "passed_tests": null,
       "expected_tests": 22,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 584.15,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 57216,
+        "input_tokens": 83566,
+        "output_tokens": 17310,
+        "reasoning_output_tokens": 127
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/03-WebPan-altrego"
     },
     {
       "attempt": "04-WebPan-control",
@@ -157,14 +171,14 @@
     "total": 5,
     "assessment": "c0/intake-assessment-v1.json"
   },
-  "next_action": "Obtain actual owner acceptance of TaskManagement documentation and explicit Build authorization, then resume existing builder context with 1378.001 seconds remaining; never repeat sealed control.",
-  "owner_request": "reports/c0-campaign/02-TaskManagement-altrego/owner-review/Review-packet.md",
+  "next_action": "Obtain actual owner acceptance of revised WebPan documentation and explicit Build authorization, then resume same context with 1215.850 seconds and at most six stages; preserve frozen order and no oracle feedback.",
+  "owner_request": "reports/c0-campaign/03-WebPan-altrego/owner-review-v2/Review-packet.md",
   "missing": [
-    "nine main attempts",
-    "ten external evaluations",
-    "paired outcome and cost comparison",
+    "eight main attempt artifacts/statuses",
+    "eight external evaluations",
+    "complete five-pair outcome and cost comparison",
     "full paired K1–K7 and contamination review",
-    "owner active-minute self-reports",
+    "owner active minutes unavailable where explicitly not measured; future gates pending",
     "final M1 implications, filled K and 10c closure",
     "owner acceptance"
   ],
@@ -176,5 +190,6 @@
     "active_minutes": null,
     "measurement_status": "not measured, owner self-report"
   },
-  "goal_registry_status": "blocked remains in tool; user explicitly resumed work; tool has no resume operation"
+  "goal_registry_status": "blocked remains in tool; user explicitly resumed work; tool has no resume operation",
+  "completed_pair_evidence": "reports/c0-campaign/TaskManagement-pair/Pair-report.md"
 }
