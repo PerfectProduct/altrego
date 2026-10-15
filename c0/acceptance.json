@@ -1,0 +1,43 @@
+{
+  "type": "owner_experiment_result_acceptance",
+  "source": "actual user message in current conversation",
+  "message_verbatim": "Принимаю результат эксперимента C0 по c0/RESULTS.md на commit 967b59e6dfe7402c6393aa57af12fbc587349904 вместе с указанными ограничениями, невыполненными требованиями и неизмеренными показателями.\n\nЭто приёмка эксперимента, а не подтверждение полной готовности созданных сервисов, преимущества Altrego или достижения автономности.\n\nЗафиксируй акт приёмки в локальных материалах закрытия. Отдельно сохрани статус: push, merge, публикация и применение предложений vault ещё не выполнены. M1 не начинай; эти действия остаются за мной.",
+  "recorded_at": "2026-10-15T15:28:18.369100+00:00",
+  "experiment": "C0",
+  "accepted_commit": "967b59e6dfe7402c6393aa57af12fbc587349904",
+  "accepted_report": "c0/RESULTS.md",
+  "accepted_report_sha256": "44a9bf572630757bbb11590189f5798df33085107342381fc485a1d63fcc194f",
+  "acceptance_status": "accepted",
+  "accepted_scope": "result of the experiment together with stated limitations, unmet requirements and unmeasured indicators",
+  "not_confirmed": [
+    "full readiness of submitted services",
+    "superiority of Altrego",
+    "autonomy"
+  ],
+  "external_actions": {
+    "push": {
+      "performed": false,
+      "authority": "owner"
+    },
+    "merge": {
+      "performed": false,
+      "authority": "owner"
+    },
+    "publication": {
+      "performed": false,
+      "authority": "owner"
+    },
+    "vault_proposals_application": {
+      "performed": false,
+      "authority": "owner"
+    }
+  },
+  "M1": {
+    "started": false,
+    "authorized_by_this_act": false,
+    "instruction": "do not start; remains with owner"
+  },
+  "owner_active_minutes": null,
+  "owner_active_minutes_status": "not supplied in this acceptance message; no duration inferred",
+  "historical_evidence": "accepted report and original delivery archive/seal remain byte-identical"
+}

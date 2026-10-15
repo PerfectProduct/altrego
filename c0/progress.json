@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-10-15T14:43:41.785479+00:00",
-  "status": "all ten attempts sealed/evaluated; final report and proposed closure prepared; owner acceptance/push/merge pending",
+  "as_of": "2026-10-15T15:28:18.369100+00:00",
+  "status": "C0 experiment result accepted at pinned report commit; local acceptance recorded; owner external actions not performed; M1 not started",
   "manifest_sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
   "planned_pairs": 5,
   "planned_attempts": 10,
@@ -296,10 +296,9 @@
     "total": 5,
     "assessment": "c0/intake-assessment-v1.json"
   },
-  "next_action": "Owner review of final report and prepared closure; no more measured runs, no M1 execution.",
+  "next_action": "No further experiment or M1 execution. Owner controls push, merge, publication and application of vault proposals.",
   "owner_request": null,
   "missing": [
-    "owner final acceptance",
     "owner push/merge/publication if chosen",
     "owner application/read-back of prepared vault state changes"
   ],
@@ -311,12 +310,26 @@
     "active_minutes": null,
     "measurement_status": "not measured, owner self-report"
   },
-  "goal_registry_status": "blocked remains in tool; user explicitly resumed work; tool has no resume operation",
   "completed_pair_evidence": [
     "reports/c0-campaign/TaskManagement-pair/Pair-report.md",
     "reports/c0-campaign/WebPan-pair/Pair-report.md",
     "reports/c0-campaign/simple-rbac-service-pair/Pair-report.md",
     "reports/c0-campaign/Chatroom-pair/Pair-report.md",
     "reports/c0-campaign/Multilingual-pair/Pair-report.md"
-  ]
+  ],
+  "owner_result_acceptance": {
+    "status": "accepted",
+    "receipt": "c0/acceptance.json",
+    "accepted_commit": "967b59e6dfe7402c6393aa57af12fbc587349904",
+    "accepted_report_sha256": "44a9bf572630757bbb11590189f5798df33085107342381fc485a1d63fcc194f",
+    "scope": "experiment only, with limitations/unmet/unmeasured retained"
+  },
+  "external_actions": {
+    "push": "not performed; remains with owner",
+    "merge": "not performed; remains with owner",
+    "publication": "not performed; remains with owner",
+    "vault_proposals_application": "not performed; remains with owner"
+  },
+  "M1_started": false,
+  "goal_registry_status_at_experiment_delivery": "blocked remains in tool; user explicitly resumed work; tool has no resume operation"
 }
