@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-10-14T22:42:57.965169+00:00",
-  "status": "incomplete; real owner gate pending",
+  "as_of": "2026-10-15T07:05:41.511621+00:00",
+  "status": "incomplete; TaskManagement Altrego documentation and execution owner gates pending",
   "manifest_sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
   "planned_pairs": 5,
   "planned_attempts": 10,
@@ -32,14 +32,20 @@
       "attempt": "02-TaskManagement-altrego",
       "task": "TaskManagement",
       "arm": "altrego",
-      "build_status": "waiting_for_brief_signature",
+      "build_status": "plan_reviewed_waiting_for_documentation_signature_and_build",
       "external_evaluation": "not_run",
       "passed_tests": null,
       "expected_tests": 44,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 421.999,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 38528,
+        "input_tokens": 55429,
+        "output_tokens": 10044,
+        "reasoning_output_tokens": 681
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/02-TaskManagement-altrego"
     },
     {
       "attempt": "03-WebPan-altrego",
@@ -151,17 +157,24 @@
     "total": 5,
     "assessment": "c0/intake-assessment-v1.json"
   },
-  "next_action": "Owner signature of unchanged original briefs; then run 02-TaskManagement-altrego planning in frozen order. Do not rerun attempt 01 or reveal it to another builder.",
-  "owner_request": "reports/c0-recovery/brief-signature-request.md",
+  "next_action": "Obtain actual owner acceptance of TaskManagement documentation and explicit Build authorization, then resume existing builder context with 1378.001 seconds remaining; never repeat sealed control.",
+  "owner_request": "reports/c0-campaign/02-TaskManagement-altrego/owner-review/Review-packet.md",
   "missing": [
     "nine main attempts",
     "ten external evaluations",
     "paired outcome and cost comparison",
-    "full paired K1\u2013K7 and contamination review",
+    "full paired K1–K7 and contamination review",
     "owner active-minute self-reports",
     "final M1 implications, filled K and 10c closure",
     "owner acceptance"
   ],
   "additional_money_spent": 0,
-  "subscription_quota_consumption": "not measured"
+  "subscription_quota_consumption": "not measured",
+  "brief_signatures": {
+    "status": "all five unchanged briefs accepted",
+    "receipt": "reports/c0-campaign/owner-decisions/five-original-briefs-signed.json",
+    "active_minutes": null,
+    "measurement_status": "not measured, owner self-report"
+  },
+  "goal_registry_status": "blocked remains in tool; user explicitly resumed work; tool has no resume operation"
 }
