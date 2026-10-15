@@ -1,13 +1,13 @@
 {
-  "as_of": "2026-10-15T13:15:35.144609+00:00",
-  "status": "incomplete; three pairs evaluated; Chatroom documentation plus narrow validation corrections/Build owner gate pending",
+  "as_of": "2026-10-15T14:03:00.332341+00:00",
+  "status": "incomplete; four pairs evaluated; Multilingual control sealed; Altrego documentation/review and partial-result-aware Build owner gate pending",
   "manifest_sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
   "planned_pairs": 5,
   "planned_attempts": 10,
-  "builds_sealed": 6,
-  "external_evaluations": 6,
+  "builds_sealed": 9,
+  "external_evaluations": 8,
   "clean_pair_denominator": null,
-  "clean_pair_denominator_status": "not final; first three pairs show no observed contamination in reviewed traces, two pairs pending",
+  "clean_pair_denominator_status": "not final; four reviewed pairs show no observed contamination, one pair pending",
   "attempts": [
     {
       "attempt": "01-TaskManagement-control",
@@ -158,59 +158,107 @@
       "attempt": "07-Chatroom-altrego",
       "task": "Chatroom",
       "arm": "altrego",
-      "build_status": "plan_reviewed_with_narrow_corrections_waiting_for_documentation_signature_and_build",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 9,
       "expected_tests": 9,
-      "active_cli_seconds": 271.113,
+      "active_cli_seconds": 785.382,
       "token_totals": {
         "cache_write_input_tokens": 0,
-        "cached_input_tokens": 47360,
-        "input_tokens": 67429,
-        "output_tokens": 6102,
-        "reasoning_output_tokens": 94
+        "cached_input_tokens": 451712,
+        "input_tokens": 504506,
+        "output_tokens": 20177,
+        "reasoning_output_tokens": 1648
       },
       "owner_active_minutes": null,
-      "evidence": "reports/c0-campaign/07-Chatroom-altrego"
+      "evidence": "reports/c0-campaign/07-Chatroom-altrego",
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/Chatroom-documentation-build-signed.json",
+      "build_initial_remaining_seconds": 1528.887,
+      "build_stage_limit_remaining": 7,
+      "unexecuted_documented_runtime_checks": [
+        "missing-interpreter startup failure",
+        "import-failure startup failure"
+      ],
+      "owner_required_review_corrections": "both executed with targeted defect witnesses",
+      "unmeasured": [
+        "sustained load",
+        "complete concurrency interleavings",
+        "unexpected 500 diagnostic privacy behavior",
+        "host OS clock modification",
+        "production deployment",
+        "dynamic egress monitoring"
+      ],
+      "failed_tests": 0,
+      "skipped_tests": 0,
+      "all_tests_passed": true
     },
     {
       "attempt": "08-Chatroom-control",
       "task": "Chatroom",
       "arm": "control",
-      "build_status": "planned",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 9,
       "expected_tests": 9,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 200.366,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 118400,
+        "input_tokens": 131675,
+        "output_tokens": 5825,
+        "reasoning_output_tokens": 308
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/08-Chatroom-control",
+      "failed_tests": 0,
+      "skipped_tests": 0,
+      "all_tests_passed": true
     },
     {
       "attempt": "09-Multilingual-control",
       "task": "Multilingual",
       "arm": "control",
-      "build_status": "planned",
+      "build_status": "artifact_sealed_partial_requirements",
       "external_evaluation": "not_run",
       "passed_tests": null,
       "expected_tests": 33,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 270.671,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 132608,
+        "input_tokens": 152492,
+        "output_tokens": 8091,
+        "reasoning_output_tokens": 430
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/09-Multilingual-control",
+      "known_unimplemented": [
+        "unrestricted translation; finite offline phrase library only"
+      ]
     },
     {
       "attempt": "10-Multilingual-altrego",
       "task": "Multilingual",
       "arm": "altrego",
-      "build_status": "planned",
+      "build_status": "plan_reviewed_with_frozen_conditions_and_unmet_translation_waiting_for_owner_documentation_signature_and_build",
       "external_evaluation": "not_run",
       "passed_tests": null,
       "expected_tests": 33,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 244.192,
+      "token_totals": {
+        "input_tokens": 41670,
+        "cached_input_tokens": 19840,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 6404,
+        "reasoning_output_tokens": 64
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/10-Multilingual-altrego",
+      "known_unimplemented": [
+        "general offline translation capability unresolved; planning only"
+      ],
+      "remaining_build_seconds": 1555.808,
+      "remaining_cli_stages": 7
     }
   ],
   "passive_intake": {
@@ -218,11 +266,11 @@
     "total": 5,
     "assessment": "c0/intake-assessment-v1.json"
   },
-  "next_action": "Obtain actual owner acceptance of Chatroom documentation and two included narrow validation corrections, plus Build authorization; resume same context with 1528.887 seconds and at most seven stages. No repeats or oracle feedback.",
-  "owner_request": "reports/c0-campaign/07-Chatroom-altrego/owner-review/Review-packet.md",
+  "next_action": "Obtain actual owner acceptance of Multilingual documentation/review, acknowledging unrestricted translation remains unmet under frozen conditions, and explicit Build authorization. Resume SAME context 01a13fd8-bfd2-7f50-8580-815b3862bd23 with 1555.808 seconds/seven stages. No new resources, changed requirements, retries or oracle feedback.",
+  "owner_request": "reports/c0-campaign/10-Multilingual-altrego/owner-review/Review-packet.md",
   "missing": [
-    "four main attempt artifacts/statuses",
-    "four external evaluations",
+    "one main attempt artifact/status",
+    "two external evaluations",
     "complete five-pair report and paired K1–K7/contamination review",
     "owner active minutes unavailable where explicitly not measured; future gates pending",
     "final M1 implications, filled K and 10c closure",
@@ -240,6 +288,7 @@
   "completed_pair_evidence": [
     "reports/c0-campaign/TaskManagement-pair/Pair-report.md",
     "reports/c0-campaign/WebPan-pair/Pair-report.md",
-    "reports/c0-campaign/simple-rbac-service-pair/Pair-report.md"
+    "reports/c0-campaign/simple-rbac-service-pair/Pair-report.md",
+    "reports/c0-campaign/Chatroom-pair/Pair-report.md"
   ]
 }
