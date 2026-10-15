@@ -1,13 +1,13 @@
 {
-  "as_of": "2026-10-15T11:09:08.100580+00:00",
-  "status": "incomplete; two pairs evaluated, RBAC control sealed; RBAC Altrego documentation/Build owner gate pending",
+  "as_of": "2026-10-15T13:15:35.144609+00:00",
+  "status": "incomplete; three pairs evaluated; Chatroom documentation plus narrow validation corrections/Build owner gate pending",
   "manifest_sha256": "5eb39300fc4c49018c1355a302042f9209def4314fbd1d2583303b99589262a1",
   "planned_pairs": 5,
   "planned_attempts": 10,
-  "builds_sealed": 5,
-  "external_evaluations": 4,
+  "builds_sealed": 6,
+  "external_evaluations": 6,
   "clean_pair_denominator": null,
-  "clean_pair_denominator_status": "not final; first two pairs show no observed contamination in reviewed traces, three pairs pending",
+  "clean_pair_denominator_status": "not final; first three pairs show no observed contamination in reviewed traces, two pairs pending",
   "attempts": [
     {
       "attempt": "01-TaskManagement-control",
@@ -114,8 +114,8 @@
       "task": "simple-rbac-service",
       "arm": "control",
       "build_status": "artifact_sealed",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "external_evaluation": "evaluated",
+      "passed_tests": 8,
       "expected_tests": 9,
       "active_cli_seconds": 86.62,
       "token_totals": {
@@ -126,39 +126,52 @@
         "reasoning_output_tokens": 47
       },
       "owner_active_minutes": null,
-      "evidence": "reports/c0-campaign/05-simple-rbac-service-control"
+      "evidence": "reports/c0-campaign/05-simple-rbac-service-control",
+      "failed_tests": 1,
+      "skipped_tests": 0,
+      "all_tests_passed": false
     },
     {
       "attempt": "06-simple-rbac-service-altrego",
       "task": "simple-rbac-service",
       "arm": "altrego",
-      "build_status": "plan_reviewed_waiting_for_documentation_signature_and_build",
-      "external_evaluation": "not_run",
-      "passed_tests": null,
+      "build_status": "artifact_sealed",
+      "external_evaluation": "evaluated",
+      "passed_tests": 8,
       "expected_tests": 9,
-      "active_cli_seconds": 198.091,
+      "active_cli_seconds": 464.932,
       "token_totals": {
         "cache_write_input_tokens": 0,
-        "cached_input_tokens": 24448,
-        "input_tokens": 40470,
-        "output_tokens": 5321,
-        "reasoning_output_tokens": 79
+        "cached_input_tokens": 208128,
+        "input_tokens": 258507,
+        "output_tokens": 13089,
+        "reasoning_output_tokens": 271
       },
       "owner_active_minutes": null,
-      "evidence": "reports/c0-campaign/06-simple-rbac-service-altrego"
+      "evidence": "reports/c0-campaign/06-simple-rbac-service-altrego",
+      "owner_documentation_signature": "reports/c0-campaign/owner-decisions/RBAC-documentation-build-signed.json",
+      "failed_tests": 1,
+      "skipped_tests": 0,
+      "all_tests_passed": false
     },
     {
       "attempt": "07-Chatroom-altrego",
       "task": "Chatroom",
       "arm": "altrego",
-      "build_status": "planned",
+      "build_status": "plan_reviewed_with_narrow_corrections_waiting_for_documentation_signature_and_build",
       "external_evaluation": "not_run",
       "passed_tests": null,
       "expected_tests": 9,
-      "active_cli_seconds": null,
-      "token_totals": null,
+      "active_cli_seconds": 271.113,
+      "token_totals": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 47360,
+        "input_tokens": 67429,
+        "output_tokens": 6102,
+        "reasoning_output_tokens": 94
+      },
       "owner_active_minutes": null,
-      "evidence": null
+      "evidence": "reports/c0-campaign/07-Chatroom-altrego"
     },
     {
       "attempt": "08-Chatroom-control",
@@ -205,11 +218,11 @@
     "total": 5,
     "assessment": "c0/intake-assessment-v1.json"
   },
-  "next_action": "Obtain actual documentation signature and Build authorization for 06-simple-rbac-service-altrego; resume same context with 1601.909 seconds and at most seven stages. No retries or oracle feedback.",
-  "owner_request": "reports/c0-campaign/06-simple-rbac-service-altrego/owner-review/Review-packet.md",
+  "next_action": "Obtain actual owner acceptance of Chatroom documentation and two included narrow validation corrections, plus Build authorization; resume same context with 1528.887 seconds and at most seven stages. No repeats or oracle feedback.",
+  "owner_request": "reports/c0-campaign/07-Chatroom-altrego/owner-review/Review-packet.md",
   "missing": [
-    "five main attempt artifacts/statuses",
-    "six external evaluations",
+    "four main attempt artifacts/statuses",
+    "four external evaluations",
     "complete five-pair report and paired K1–K7/contamination review",
     "owner active minutes unavailable where explicitly not measured; future gates pending",
     "final M1 implications, filled K and 10c closure",
@@ -226,6 +239,7 @@
   "goal_registry_status": "blocked remains in tool; user explicitly resumed work; tool has no resume operation",
   "completed_pair_evidence": [
     "reports/c0-campaign/TaskManagement-pair/Pair-report.md",
-    "reports/c0-campaign/WebPan-pair/Pair-report.md"
+    "reports/c0-campaign/WebPan-pair/Pair-report.md",
+    "reports/c0-campaign/simple-rbac-service-pair/Pair-report.md"
   ]
 }
